@@ -1,5 +1,6 @@
 drop table if exists Players;
 drop table if exists AtBats;
+drop table if exists Pitches;
 drop table if exists Ejections;
 
 -- Players -------------------------------------------------------------------
@@ -42,6 +43,86 @@ load data infile '/var/lib/mysql-files/MLB/atbats.csv' ignore into table AtBats
      fields terminated by ','
      lines terminated by '\n'
      ignore 1 lines;
+
+
+-- At Bat -------------------------------------------------------------------
+select '----------------------------------------------------------------' as '';
+select 'Create Pitches' as '';
+
+create table Pitches (
+	ab_id decimal(10),
+	pitch_num decimal(3),
+	px decimal(3, 3),
+	pz decimal(3, 3),
+	start_speed decimal(3, 1),
+	end_speed decimal(3, 1),
+	spin_rate decimal(4, 3),
+	spin_dir decimal(3, 3),
+	code char(1),
+	type char(1),
+	pitch_type char(2),
+	event_num decimal(4),
+	b_score decimal(2),
+	b_count decimal(1),
+	s_count decimal(1),
+	outs decimal(1),
+	on_1b boolean,
+	on_2b boolean,
+	on_3b boolean,
+	pfx_x decimal(2, 2),
+	pfx_z decimal(2, 2),
+	zone decimal(2),
+	-- Constraints	    
+	primary key (ab_id, pitch_num)
+);
+
+load data infile '/var/lib/mysql-files/MLB/pitches.csv' ignore into table Pitches
+	fields terminated by ','
+	lines terminated by '\n'
+	ignore 1 lines
+	(
+		px,
+		pz,
+		start_speed,
+		end_speed,
+		spin_rate,
+		spin_dir,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		@ignore,
+		pfx_x,
+		pfx_z,
+		@ignore,
+		zone,
+		code,
+		type,
+		pitch_type,
+		event_num,
+		b_score,
+		ab_id,
+		b_count,
+		s_count,
+		outs,
+		pitch_num,
+		on_1b,
+		on_2b,
+		on_3b
+	);
+
 
 -- Ejections -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
