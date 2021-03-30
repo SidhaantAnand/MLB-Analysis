@@ -290,3 +290,56 @@ update GameBatterStats
 	inner join AtBats on AtBats.g_id = GameBatterStats.g_id and AtBats.batter_id = GameBatterStats.batter_id
 	inner join Games on Games.g_id = AtBats.g_id
 	set GameBatterStats.team_id = Games.home_team where AtBats.top = 'False';
+
+
+-- Venue -------------------------------------------------------------------
+select '----------------------------------------------------------------' as '';
+select 'Create Venue' as '';
+create table Venue(
+	venue_id int  NOT NULL AUTO_INCREMENT,
+	venue_name varchar(300),
+	primary key(venue_id)
+);
+insert into Venue (venue_name) ( SELECT distinct venue_name FROM Games);
+
+
+-- Teams -------------------------------------------------------------------
+select '----------------------------------------------------------------' as '';
+select 'Create Teams' as '';
+create table Teams(
+	team_id char(3) not null,
+	team_name varchar(300),
+	primary key(team_id)
+);
+insert into Teams (team_id) ( SELECT distinct home_team AS team_id FROM Games);
+
+update Teams set team_name = 'Los Angeles Angles' WHERE team_id = 'ana';
+update Teams set team_name = 'Arizona Diamondbacks' WHERE team_id = 'ari';
+update Teams set team_name = 'Atlanta Braves' WHERE team_id = 'atl';
+update Teams set team_name = 'Baltimore Orioles' WHERE team_id = 'bal';
+update Teams set team_name = 'Boston Red Sox' WHERE team_id = 'bos';
+update Teams set team_name = 'Chicago White Sox' WHERE team_id = 'cha';
+update Teams set team_name = 'Chicago Cubs' WHERE team_id = 'chn';
+update Teams set team_name = 'Cincinnati Reds' WHERE team_id = 'cin';
+update Teams set team_name = 'Cleveland Indians' WHERE team_id = 'cle';
+update Teams set team_name = 'Colorado Rockies' WHERE team_id = 'col';
+update Teams set team_name = 'Detroit Tigers' WHERE team_id = 'det';
+update Teams set team_name = 'Houston Astros' WHERE team_id = 'hou';
+update Teams set team_name = 'Kansas City Royals' WHERE team_id = 'kca';
+update Teams set team_name = 'Los Angeles Dodgers' WHERE team_id = 'lan';
+update Teams set team_name = 'Miami Marlins' WHERE team_id = 'mia';
+update Teams set team_name = 'Milwaukee Brewers' WHERE team_id = 'mil';
+update Teams set team_name = 'Minnesota Twins' WHERE team_id = 'min';
+update Teams set team_name = 'New York Yankees' WHERE team_id = 'nya';
+update Teams set team_name = 'New York Mets' WHERE team_id = 'nyn';
+update Teams set team_name = 'Oakland Athletics' WHERE team_id = 'oak';
+update Teams set team_name = 'Philadelphia Phillies' WHERE team_id = 'phi';
+update Teams set team_name = 'Pittsburgh Pirates' WHERE team_id = 'pit';
+update Teams set team_name = 'San Diego Padres' WHERE team_id = 'sdn';
+update Teams set team_name = 'Seattle Mariners' WHERE team_id = 'sea';
+update Teams set team_name = 'San Francisco Giants' WHERE team_id = 'sfn';
+update Teams set team_name = 'St. Louis Cardinals' WHERE team_id = 'sln';
+update Teams set team_name = 'Tampa Bay Rays' WHERE team_id = 'tba';
+update Teams set team_name = 'Texas Rangers' WHERE team_id = 'tex';
+update Teams set team_name = 'Toronto Blue Jays' WHERE team_id = 'tor';
+update Teams set team_name = 'Washington Nationals' WHERE team_id = 'was';
