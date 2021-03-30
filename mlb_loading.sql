@@ -53,8 +53,6 @@ select 'Create Pitches' as '';
 create table Pitches (
 	ab_id decimal(10),
 	pitch_num decimal(3),
-	px decimal(24, 22),
-	pz decimal(22, 20),
 	start_speed decimal(4, 1),
 	end_speed decimal(4, 1),
 	spin_rate decimal(7, 3),
@@ -70,8 +68,6 @@ create table Pitches (
 	on_1b boolean,
 	on_2b boolean,
 	on_3b boolean,
-	pfx_x decimal(23, 21),
-	pfx_z decimal(23, 21),
 	zone decimal(2),
 	-- Constraints	    
 	primary key (ab_id, pitch_num)
@@ -82,8 +78,8 @@ load data infile '/var/lib/mysql-files/MLB/pitches.csv' ignore into table Pitche
 	lines terminated by '\n'
 	ignore 1 lines
 	(
-		@px,
-		@pz,
+		@ignore,
+		@ignore,
 		@start_speed,
 		@end_speed,
 		@spin_rate,
@@ -105,8 +101,8 @@ load data infile '/var/lib/mysql-files/MLB/pitches.csv' ignore into table Pitche
 		@ignore,
 		@ignore,
 		@ignore,
-		@pfx_x,
-		@pfx_z,
+		@ignore,
+		@ignore,
 		@ignore,
 		@zone,
 		code,
@@ -124,14 +120,10 @@ load data infile '/var/lib/mysql-files/MLB/pitches.csv' ignore into table Pitche
 		on_3b
 	)
 	set
-		px = if (@px like '', NULL, @px),
-		pz = if (@pz like '', NULL, @pz),
 		start_speed = if (@start_speed like '', NULL, @start_speed),
 		end_speed = if (@end_speed like '', NULL, @end_speed),
 		spin_rate = if (@spin_rate like '', NULL, @spin_rate),
 		spin_dir = if (@spin_dir like '', NULL, @spin_dir),
-		pfx_x = if (@pfx_x like '', NULL, @pfx_x),
-		pfx_z = if (@pfx_z like '', NULL, @pfx_z),
 		zone = if (@zone like '', NULL, @zone);
 
 
@@ -173,7 +165,6 @@ select 'Create GameBatterStats' as '';
 
 
 select 'Create Games' as '';
-drop table Games;
 create table Games (attendance decimal(5) check (attendance >= 0),
 			away_final_score decimal(2) not null check (away_final_score >= 0),
 			away_team char(3) not null,
