@@ -173,7 +173,7 @@ create table Games (attendance decimal(5) check (attendance >= 0),
 			venue_name varchar(300),
 			weather varchar(300) not null check (weather REGEXP '[0-9]+ degrees, (clear|sunny|overcast|cloudy|partly cloudy|snow|drizzle|dome|roof closed|rain)'),
 			wind varchar(300) not null check (wind REGEXP '[0-9]+ mph,.*') ,
-			delay varchar(300),
+			delay decimal(5),
 
 			primary key (g_id)
 		);
@@ -343,3 +343,32 @@ update Teams set team_name = 'Tampa Bay Rays' WHERE team_id = 'tba';
 update Teams set team_name = 'Texas Rangers' WHERE team_id = 'tex';
 update Teams set team_name = 'Toronto Blue Jays' WHERE team_id = 'tor';
 update Teams set team_name = 'Washington Nationals' WHERE team_id = 'was';
+
+
+
+
+-- Venue -------------------------------------------------------------------
+select '----------------------------------------------------------------' as '';
+select 'Create GameTeamStats' as '';
+create table GameTeamStats(
+	g_id decimal(9) not null,
+	team_id char(3) not null,
+	venue_id int,
+	is_home_team decimal(1),
+	won decimal(1),
+	final_score decimal(2),
+	ejections decimal(2),
+	outs decimal(2),
+	delay decimal(5),
+	primary key(g_id,team_id)
+);
+
+
+insert into GameTeamStats(g_id,team_id,final_score,delay,is_home_team)
+( SELECT g_id,home_team AS team_id,home_final_score AS final_score,delay,1 FROM Games);
+
+insert into GameTeamStats(g_id,team_id,final_score,delay,is_home_team)
+( SELECT g_id,away_team AS team_id,away_final_score AS final_score,delay,0 FROM Games);
+
+WITH venueGameJoin AS (SELECT Venue.venue_id,Venue.venue_name,Games.g_id AS g_id FROM Venue INNER JOIN Games USING(venue_name))
+update GameTeamStats set venue_id = (SELECT venue_id WHERE GameTeamStats.g_id = venueGameJoin.g_id );
