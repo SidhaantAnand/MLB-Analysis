@@ -371,4 +371,13 @@ insert into GameTeamStats(g_id,team_id,final_score,delay,is_home_team)
 ( SELECT g_id,away_team AS team_id,away_final_score AS final_score,delay,0 FROM Games);
 
 WITH venueGameJoin AS (SELECT Venue.venue_id,Venue.venue_name,Games.g_id AS g_id FROM Venue INNER JOIN Games USING(venue_name))
-update GameTeamStats set venue_id = (SELECT venue_id WHERE GameTeamStats.g_id = venueGameJoin.g_id );
+update GameTeamStats set venue_id = (SELECT venue_id FROM venueGameJoin WHERE GameTeamStats.g_id = venueGameJoin.g_id );
+
+WITH filteredHome AS (SELECT g_id FROM Ejections WHERE Ejections.is_home_team = 'TRUE'),
+outsCount AS (SELECT COUNT(*) AS countOuts, filteredHome.g_id FROM filteredHome GROUP BY g_id )
+update GameTeamStats set outs = (SELECT countOuts FROM outCounts WHERE outCounts.g_id = GameTeamStats.g_id);
+
+
+WITH filteredAway AS (SELECT g_id FROM Ejections WHERE Ejections.is_home_team = 'FALSE'),
+outsCount AS (SELECT COUNT(*) AS countOuts, filteredHome.g_id FROM filteredHome GROUP BY g_id )
+update GameTeamStats set outs = (SELECT countOuts FROM outCounts WHERE outCounts.g_id = GameTeamStats.g_id);
