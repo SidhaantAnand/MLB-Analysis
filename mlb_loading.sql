@@ -145,14 +145,13 @@ create table Ejections (ab_id decimal(10),
 			correct char(2) not null,
 			team char(3),
 			is_home_team char(5),
-			des varchar(255),
-		-- Constraints	    
+			des text,
 			primary key (ab_id, g_id, player_id)
 		);
 
 load data infile '/var/lib/mysql-files/MLB/ejections.csv' ignore into table Ejections
      fields terminated by ','
-     lines terminated by '\n'
+     lines terminated by '\r\n'
      ignore 1 lines
 	(ab_id, des, event_num, g_id, player_id, @throwaway, bs, correct, team, is_home_team);
 
