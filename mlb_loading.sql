@@ -1,12 +1,14 @@
 warnings;
-drop table if exists Players;
-drop table if exists AtBats;
-drop table if exists Pitches;
-drop table if exists Ejections;
-drop table if exists Games;
-drop table if exists Umpires;
 drop table if exists GameUmpireStats;
 drop table if exists GameBatterStats;
+drop table if exists GamePitcherStats;
+drop table if exists Ejections;
+drop table if exists Pitches;
+drop table if exists AtBats;
+drop table if exists Players;
+drop table if exists Games;
+drop table if exists Umpires;
+
 -- Players -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create Players' as '';
@@ -38,21 +40,34 @@ create table AtBats (ab_id decimal(10),
 			p_throws char(1),
 			pitcher_id decimal(6),
 			stand char(1),
-			top char(5),
+			top boolean,
 		-- Constraints	    
 			primary key (ab_id),
             foreign key (batter_id) references Players(player_id),
             foreign key (pitcher_id) references Players(player_id),
             foreign key (g_id) references Games(g_id),
 			check (p_throws = 'L' or p_throws = 'R'),
-			check (stand = 'L' or stand = 'R'),
-			check (top = 'True' or top = 'False')
+			check (stand = 'L' or stand = 'R')
 		);
 
 load data infile '/var/lib/mysql-files/MLB/atbats.csv' ignore into table AtBats
-     fields terminated by ','
-     lines terminated by '\n'
-     ignore 1 lines;
+	fields terminated by ','
+	lines terminated by '\n'
+	ignore 1 lines
+	(
+	batter_id,
+	event,
+	g_id,
+	inning,
+	o,
+	p_score,
+	p_throws,
+	pitcher_id,
+	stand,
+	@top boolean
+	)
+	set
+		top = if (@top = 'True', true, false);
 
 -- Pitches -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
@@ -420,9 +435,10 @@ create table GamePitcherStats(
 	total_s_counts decimal(3)
 );
 
-insert into GamePitcherStats(pitcher_id, g_id, num_pitches, avg_spin_rate, avg_spin_dir, avg_start_speed, total_b_counts, total_s_counts) 
-select pitcher_id, g_id, count(*), avg(spin_rate), avg(spin_dir), avg(start_speed), sum(b_count), sum(s_count) 
-from AtBats inner join Pitches using (ab_id) group by pitcher_id, g_id;
+insert into GamePitcherStats(pitcher_id, g_id, team_id, num_pitches, avg_spin_rate, avg_spin_dir, avg_start_speed, total_b_counts, total_s_counts)
+select pitcher_id, g_id, if(top = 'True', (select away_team from Games where AtBats.g_id = Games.g_id), (select home_team from Games where AtBats.g_id = Games.g_id)),
+       count(*), avg(spin_rate), avg(spin_dir), avg(start_speed), sum(b_count), sum(s_count)
+from AtBats inner join Pitches using (ab_id) group by pitcher_id, g_id, top;
 
 with A as
     (select pitcher_id, g_id, zone, count(*) as pitches_in_zone from AtBats inner join Pitches using (ab_id) group by pitcher_id, g_id, zone)
