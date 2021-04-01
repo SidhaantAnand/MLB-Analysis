@@ -157,16 +157,16 @@ select 'Create Ejections' as '';
 create table Ejections (ab_id decimal(10),
 			g_id decimal(9) not null,
 			event_num decimal(4),
-			player_id decimal(6),
 			bs char(1),
 			correct char(2) not null,
 			team char(3),
-			is_home_team char(5),
+			is_home_team boolean,
 			des text,
-			primary key (ab_id, g_id, player_id),
+			primary key (ab_id, g_id, event_num),
 			foreign key (ab_id) references AtBats(ab_id),
 			foreign key (g_id) references Games(g_id),
-			check(is_home_team = 'TRUE' or is_home_team = 'FALSE'),
+			foreign key (team) references Teams(team_id),
+			check(is_home_team = true or is_home_team = false),
 			check(bs = 'Y' or bs = '')
 		);
 
@@ -174,8 +174,21 @@ load data infile '/var/lib/mysql-files/MLB/ejections.csv' ignore into table Ejec
      fields terminated by ','
      lines terminated by '\r\n'
      ignore 1 lines
-	(ab_id, des, event_num, g_id, player_id, @throwaway, bs, correct, team, is_home_team);
+	(ab_id, des, event_num, g_id, @throwaway, @throwaway, bs, correct, @team, @is_home_team)
+	set
+		team = case
+			when @team = 'azn' then 'ari'
+			when @team = 'laa' then 'ana'
+			when @team = 'stl' then 'sln'
+			else @team
+		end,
+		is_home_team = case
+			when @is_home_team = 'TRUE' then true
+			when @is_home_team = 'FALSE' then false
+		end;
 
+-- Games -------------------------------------------------------------------
+select '----------------------------------------------------------------' as '';
 select 'Create Games' as '';
 create table Games (attendance decimal(5) check (attendance >= 0),
 			away_final_score decimal(2) not null check (away_final_score >= 0),
