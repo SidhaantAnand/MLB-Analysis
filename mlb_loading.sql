@@ -3,13 +3,13 @@ drop table if exists GamePitcherStats;
 drop table if exists GameTeamStats;
 drop table if exists GameBatterStats;
 drop table if exists GameUmpireStats;
-drop table if exists Venue;
 drop table if exists Ejections;
 drop table if exists Pitches;
 drop table if exists AtBats;
 drop table if exists Players;
-drop table if exists Teams;
 drop table if exists Games;
+drop table if exists Venue;
+drop table if exists Teams;
 drop table if exists Umpires;
 
 
@@ -120,8 +120,8 @@ update Teams set team_name = 'Texas Rangers' WHERE team_id = 'tex';
 update Teams set team_name = 'Toronto Blue Jays' WHERE team_id = 'tor';
 update Teams set team_name = 'Washington Nationals' WHERE team_id = 'was';
 
--- alter table Games add foreign key(home_team) references Teams(team_id);
--- alter table Games add foreign key(away_team) references Teams(team_id);
+alter table Games add foreign key(home_team) references Teams(team_id);
+alter table Games add foreign key(away_team) references Teams(team_id);
 -- Players -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create Players' as '';
@@ -210,7 +210,8 @@ create table Pitches (
 	on_3b boolean,
 	zone decimal(2),
 	-- Constraints	    
-	primary key (ab_id, pitch_num)
+	primary key (ab_id, pitch_num),
+	foreign key (ab_id) references AtBats(ab_id)
 );
 
 load data infile '/var/lib/mysql-files/MLB/pitches.csv' ignore into table Pitches
@@ -316,10 +317,9 @@ create table Venue(
 );
 insert into Venue (venue_name) ( SELECT distinct venue_name FROM Games);
 
--- alter table Games add foreign key(venue_name) references Venue(venue_name)
+alter table Games add foreign key(venue_name) references Venue(venue_name);
 
-
--- Game Umpire Stats -------------------------------------------------------
+-- Game Umpire Stats -----------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create GameUmpireStats' as '';
 create table GameUmpireStats (
@@ -381,20 +381,14 @@ create table GameBatterStats (
 			g_id decimal(9),
 			team_id char(3),
 			outs decimal(2),
-			stand char(1),
             primary key(g_id, batter_id),
             foreign key (batter_id) references Players(player_id),
             foreign key (g_id) references Games(g_id),
-            foreign key (team_id) references Teams(team_id),
-			check (stand = 'L' or stand = 'R')
+            foreign key (team_id) references Teams(team_id)
 		);
 
 insert into GameBatterStats(batter_id, g_id, outs)
 	(select batter_id, g_id, sum(o) from AtBats group by batter_id, g_id);
-
-update GameBatterStats
-	inner join AtBats on AtBats.g_id = GameBatterStats.g_id and AtBats.batter_id = GameBatterStats.batter_id
-	set GameBatterStats.stand = AtBats.stand;
 
 update GameBatterStats
 	inner join AtBats on AtBats.g_id = GameBatterStats.g_id and AtBats.batter_id = GameBatterStats.batter_id
@@ -420,8 +414,12 @@ create table GameTeamStats(
 	ejections decimal(2),
 	outs decimal(2),
 	delay decimal(5),
-	primary key(g_id,team_id)
+	primary key(g_id,team_id),
+	foreign key(g_id) references Games(g_id),
+	foreign key(team_id) references Teams(team_id),
+	foreign key(venue_id) references Venue(venue_id)
 );
+
 
 insert into GameTeamStats(g_id,team_id,final_score,delay,is_home_team)
 ( SELECT g_id,home_team AS team_id,home_final_score AS final_score,delay,true FROM Games);
@@ -444,12 +442,12 @@ update GameTeamStats set outs = (SELECT countOuts FROM outsCount WHERE outsCount
 CREATE TABLE GameTeamStats2 LIKE GameTeamStats;
 insert into GameTeamStats2 ( SELECT * FROM GameTeamStats );
 UPDATE GameTeamStats AS t1 set t1.won = (
-CASE
+CASE 
 	WHEN t1.final_score > (SELECT final_score FROM GameTeamStats2 AS t2 WHERE t1.g_id = t2.g_id and t1.team_id != t2.team_id)
 	THEN 'W'
 	WHEN t1.final_score = (SELECT final_score FROM GameTeamStats2 AS t2 WHERE t1.g_id = t2.g_id and t1.team_id != t2.team_id)
 	THEN 'D'
-	ELSE
+	ELSE 
 	'L'
 END
 );
@@ -469,12 +467,15 @@ create table GamePitcherStats(
 	most_common_zone decimal(2),
 	avg_start_speed decimal(4, 1),
 	total_b_counts decimal(3),
-	total_s_counts decimal(3)
---	foreign key(team_id) references Teams(team_id)
+	total_s_counts decimal(3),
+	primary key(pitcher_id, g_id),
+	foreign key(team_id) references Teams(team_id),
+	foreign key(g_id) references Games(g_id),
+	foreign key(pitcher_id) references Players(player_id)
 );
 
 insert into GamePitcherStats(pitcher_id, g_id, team_id, num_pitches, avg_spin_rate, avg_spin_dir, avg_start_speed, total_b_counts, total_s_counts)
-select pitcher_id, g_id, if(top = true, (select away_team from Games where AtBats.g_id = Games.g_id), (select home_team from Games where AtBats.g_id = Games.g_id)),
+select pitcher_id, g_id, if(top = true, (select home_team from Games where AtBats.g_id = Games.g_id), (select away_team from Games where AtBats.g_id = Games.g_id)),
        count(*), avg(spin_rate), avg(spin_dir), avg(start_speed), sum(b_count), sum(s_count)
 from AtBats inner join Pitches using (ab_id) group by pitcher_id, g_id, top;
 
