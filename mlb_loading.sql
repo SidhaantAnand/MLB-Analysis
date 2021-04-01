@@ -1,13 +1,116 @@
 warnings;
-drop table if exists GameUmpireStats;
-drop table if exists GameBatterStats;
 drop table if exists GamePitcherStats;
+drop table if exists GameTeamsStats;
+drop table if exists GameBatterStats;
+drop table if exists GameUmpireStats;
+drop table if exists Venue;
 drop table if exists Ejections;
 drop table if exists Pitches;
 drop table if exists AtBats;
 drop table if exists Players;
+drop table if exists Teams;
 drop table if exists Games;
 drop table if exists Umpires;
+
+
+-- Umpires -------------------------------------------------------------------
+select '----------------------------------------------------------------' as '';
+select 'Create Umpires' as '';
+create table Umpires (umpire_id int not null auto_increment,
+			first_name char(20) not null,
+			last_name char(20) not null,
+-- Constraints	    
+		    primary key (umpire_id)
+		);
+insert into Umpires (first_name, last_name)
+	(select substring(umpire_1B, 1, locate(' ', umpire_1B)), substring(umpire_1B, locate(' ', umpire_1B) + 1) from Games group by umpire_1B);
+
+insert into Umpires (first_name, last_name)
+	(select substring(umpire_2B, 1, locate(' ', umpire_2B)), substring(umpire_2B, locate(' ', umpire_2B) + 1) from Games 
+	where not exists (select first_name, last_name from Umpires) group by umpire_2B);
+
+insert into Umpires (first_name, last_name)
+	(select substring(umpire_3B, 1, locate(' ', umpire_3B)), substring(umpire_3B, locate(' ', umpire_3B) + 1) from Games 
+	where not exists (select first_name, last_name from Umpires) group by umpire_3B);
+
+insert into Umpires (first_name, last_name)
+	(select substring(umpire_HP, 1, locate(' ', umpire_HP)), substring(umpire_HP, locate(' ', umpire_HP) + 1) from Games 
+	where not exists (select first_name, last_name from Umpires) group by umpire_HP);
+
+
+-- Games -------------------------------------------------------------------
+select '----------------------------------------------------------------' as '';
+select 'Create Games' as '';
+create table Games (attendance decimal(5) check (attendance >= 0),
+			away_final_score decimal(2) not null check (away_final_score >= 0),
+			away_team char(3) not null,
+			date datetime,
+			elapsed_time decimal(3),
+			g_id decimal(9) not null,
+			home_final_score decimal(2) not null check (home_final_score >= 0),
+			home_team char(3) not null,
+			start_time varchar(10) not null check (start_time REGEXP '[0-9]:[0-9][0-9] [A|P][M]'),
+			umpire_1B varchar(300),
+			umpire_2B varchar(300),
+			umpire_3B varchar(300),
+			umpire_HP varchar(300),
+			venue_name varchar(300),
+			weather varchar(300) not null check (weather REGEXP '[0-9]+ degrees, (clear|sunny|overcast|cloudy|partly cloudy|snow|drizzle|dome|roof closed|rain)'),
+			wind varchar(300) not null check (wind REGEXP '[0-9]+ mph,.*') ,
+			delay decimal(5),
+
+			primary key (g_id)
+		);
+
+load data infile '/var/lib/mysql-files/MLB/games.csv' ignore into table Games
+     fields terminated by ','
+     OPTIONALLY ENCLOSED BY '"'
+     lines terminated by '\n'
+     ignore 1 lines
+	(attendance,away_final_score,away_team,date,elapsed_time,g_id,home_final_score,home_team,start_time,umpire_1B,umpire_2B,umpire_3B,umpire_HP,venue_name,weather,wind,delay);
+
+
+-- Teams -------------------------------------------------------------------
+select '----------------------------------------------------------------' as '';
+select 'Create Teams' as '';
+create table Teams(
+	team_id char(3) not null,
+	team_name varchar(300),
+	primary key(team_id)
+);
+insert into Teams (team_id) ( SELECT distinct home_team AS team_id FROM Games);
+
+update Teams set team_name = 'Los Angeles Angles' WHERE team_id = 'ana';
+update Teams set team_name = 'Arizona Diamondbacks' WHERE team_id = 'ari';
+update Teams set team_name = 'Atlanta Braves' WHERE team_id = 'atl';
+update Teams set team_name = 'Baltimore Orioles' WHERE team_id = 'bal';
+update Teams set team_name = 'Boston Red Sox' WHERE team_id = 'bos';
+update Teams set team_name = 'Chicago White Sox' WHERE team_id = 'cha';
+update Teams set team_name = 'Chicago Cubs' WHERE team_id = 'chn';
+update Teams set team_name = 'Cincinnati Reds' WHERE team_id = 'cin';
+update Teams set team_name = 'Cleveland Indians' WHERE team_id = 'cle';
+update Teams set team_name = 'Colorado Rockies' WHERE team_id = 'col';
+update Teams set team_name = 'Detroit Tigers' WHERE team_id = 'det';
+update Teams set team_name = 'Houston Astros' WHERE team_id = 'hou';
+update Teams set team_name = 'Kansas City Royals' WHERE team_id = 'kca';
+update Teams set team_name = 'Los Angeles Dodgers' WHERE team_id = 'lan';
+update Teams set team_name = 'Miami Marlins' WHERE team_id = 'mia';
+update Teams set team_name = 'Milwaukee Brewers' WHERE team_id = 'mil';
+update Teams set team_name = 'Minnesota Twins' WHERE team_id = 'min';
+update Teams set team_name = 'New York Yankees' WHERE team_id = 'nya';
+update Teams set team_name = 'New York Mets' WHERE team_id = 'nyn';
+update Teams set team_name = 'Oakland Athletics' WHERE team_id = 'oak';
+update Teams set team_name = 'Philadelphia Phillies' WHERE team_id = 'phi';
+update Teams set team_name = 'Pittsburgh Pirates' WHERE team_id = 'pit';
+update Teams set team_name = 'San Diego Padres' WHERE team_id = 'sdn';
+update Teams set team_name = 'Seattle Mariners' WHERE team_id = 'sea';
+update Teams set team_name = 'San Francisco Giants' WHERE team_id = 'sfn';
+update Teams set team_name = 'St. Louis Cardinals' WHERE team_id = 'sln';
+update Teams set team_name = 'Tampa Bay Rays' WHERE team_id = 'tba';
+update Teams set team_name = 'Texas Rangers' WHERE team_id = 'tex';
+update Teams set team_name = 'Toronto Blue Jays' WHERE team_id = 'tor';
+update Teams set team_name = 'Washington Nationals' WHERE team_id = 'was';
+
 
 -- Players -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
@@ -25,6 +128,7 @@ load data infile '/var/lib/mysql-files/MLB/player_names.csv' ignore into table P
      lines terminated by '\n'
      ignore 1 lines
      (player_id, first_name, last_name);
+
 
 -- At Bat -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
@@ -69,10 +173,10 @@ load data infile '/var/lib/mysql-files/MLB/atbats.csv' ignore into table AtBats
 	set
 		top = if (@top = 'True', true, false);
 
+
 -- Pitches -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create Pitches' as '';
-
 create table Pitches (
 	ab_id decimal(10),
 	pitch_num decimal(3),
@@ -153,7 +257,6 @@ load data infile '/var/lib/mysql-files/MLB/pitches.csv' ignore into table Pitche
 -- Ejections -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create Ejections' as '';
-
 create table Ejections (ab_id decimal(10),
 			g_id decimal(9) not null,
 			event_num decimal(4),
@@ -187,66 +290,21 @@ load data infile '/var/lib/mysql-files/MLB/ejections.csv' ignore into table Ejec
 			when @is_home_team = 'FALSE' then false
 		end;
 
--- Games -------------------------------------------------------------------
+
+-- Venue -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
-select 'Create Games' as '';
-create table Games (attendance decimal(5) check (attendance >= 0),
-			away_final_score decimal(2) not null check (away_final_score >= 0),
-			away_team char(3) not null,
-			date datetime,
-			elapsed_time decimal(3),
-			g_id decimal(9) not null,
-			home_final_score decimal(2) not null check (home_final_score >= 0),
-			home_team char(3) not null,
-			start_time varchar(10) not null check (start_time REGEXP '[0-9]:[0-9][0-9] [A|P][M]'),
-			umpire_1B varchar(300),
-			umpire_2B varchar(300),
-			umpire_3B varchar(300),
-			umpire_HP varchar(300),
-			venue_name varchar(300),
-			weather varchar(300) not null check (weather REGEXP '[0-9]+ degrees, (clear|sunny|overcast|cloudy|partly cloudy|snow|drizzle|dome|roof closed|rain)'),
-			wind varchar(300) not null check (wind REGEXP '[0-9]+ mph,.*') ,
-			delay decimal(5),
-
-			primary key (g_id)
-		);
+select 'Create Venue' as '';
+create table Venue(
+	venue_id int  NOT NULL AUTO_INCREMENT,
+	venue_name varchar(300),
+	primary key(venue_id)
+);
+insert into Venue (venue_name) ( SELECT distinct venue_name FROM Games);
 
 
-load data infile '/var/lib/mysql-files/MLB/games.csv' ignore into table Games
-     fields terminated by ','
-     OPTIONALLY ENCLOSED BY '"'
-     lines terminated by '\n'
-     ignore 1 lines
-	(attendance,away_final_score,away_team,date,elapsed_time,g_id,home_final_score,home_team,start_time,umpire_1B,umpire_2B,umpire_3B,umpire_HP,venue_name,weather,wind,delay);
-
--- Umpires -------------------------------------------------------------------
-select '----------------------------------------------------------------' as '';
-select 'Create Umpires' as '';
-create table Umpires (umpire_id int not null auto_increment,
-			first_name char(20) not null,
-			last_name char(20) not null,
--- Constraints	    
-		    primary key (umpire_id)
-		);
-insert into Umpires (first_name, last_name)
-	(select substring(umpire_1B, 1, locate(' ', umpire_1B)), substring(umpire_1B, locate(' ', umpire_1B) + 1) from Games group by umpire_1B);
-
-insert into Umpires (first_name, last_name)
-	(select substring(umpire_2B, 1, locate(' ', umpire_2B)), substring(umpire_2B, locate(' ', umpire_2B) + 1) from Games 
-	where not exists (select first_name, last_name from Umpires) group by umpire_2B);
-
-insert into Umpires (first_name, last_name)
-	(select substring(umpire_3B, 1, locate(' ', umpire_3B)), substring(umpire_3B, locate(' ', umpire_3B) + 1) from Games 
-	where not exists (select first_name, last_name from Umpires) group by umpire_3B);
-
-insert into Umpires (first_name, last_name)
-	(select substring(umpire_HP, 1, locate(' ', umpire_HP)), substring(umpire_HP, locate(' ', umpire_HP) + 1) from Games 
-	where not exists (select first_name, last_name from Umpires) group by umpire_HP);
-
--- Umpire Stats-------------------------------------------------------------------
+--Game Umpire Stats-------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create GameUmpireStats' as '';
-
 create table GameUmpireStats (umpire_id int,
 			g_id decimal(9),
 			position char(2),
@@ -295,6 +353,7 @@ update GameUmpireStats
     and GameUmpireStats.position = num_correct.position
     set GameUmpireStats.bs_correct = num_correct.count;
 
+
 -- Game Batter Stats-------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create GameBatterStats' as '';
@@ -328,62 +387,8 @@ update GameBatterStats
 	inner join Games on Games.g_id = AtBats.g_id
 	set GameBatterStats.team_id = Games.home_team where AtBats.top = 'False';
 
--- Venue -------------------------------------------------------------------
-select '----------------------------------------------------------------' as '';
-select 'Create Venue' as '';
-create table Venue(
-	venue_id int  NOT NULL AUTO_INCREMENT,
-	venue_name varchar(300),
-	primary key(venue_id)
-);
-insert into Venue (venue_name) ( SELECT distinct venue_name FROM Games);
 
-
--- Teams -------------------------------------------------------------------
-select '----------------------------------------------------------------' as '';
-select 'Create Teams' as '';
-create table Teams(
-	team_id char(3) not null,
-	team_name varchar(300),
-	primary key(team_id)
-);
-insert into Teams (team_id) ( SELECT distinct home_team AS team_id FROM Games);
-
-update Teams set team_name = 'Los Angeles Angles' WHERE team_id = 'ana';
-update Teams set team_name = 'Arizona Diamondbacks' WHERE team_id = 'ari';
-update Teams set team_name = 'Atlanta Braves' WHERE team_id = 'atl';
-update Teams set team_name = 'Baltimore Orioles' WHERE team_id = 'bal';
-update Teams set team_name = 'Boston Red Sox' WHERE team_id = 'bos';
-update Teams set team_name = 'Chicago White Sox' WHERE team_id = 'cha';
-update Teams set team_name = 'Chicago Cubs' WHERE team_id = 'chn';
-update Teams set team_name = 'Cincinnati Reds' WHERE team_id = 'cin';
-update Teams set team_name = 'Cleveland Indians' WHERE team_id = 'cle';
-update Teams set team_name = 'Colorado Rockies' WHERE team_id = 'col';
-update Teams set team_name = 'Detroit Tigers' WHERE team_id = 'det';
-update Teams set team_name = 'Houston Astros' WHERE team_id = 'hou';
-update Teams set team_name = 'Kansas City Royals' WHERE team_id = 'kca';
-update Teams set team_name = 'Los Angeles Dodgers' WHERE team_id = 'lan';
-update Teams set team_name = 'Miami Marlins' WHERE team_id = 'mia';
-update Teams set team_name = 'Milwaukee Brewers' WHERE team_id = 'mil';
-update Teams set team_name = 'Minnesota Twins' WHERE team_id = 'min';
-update Teams set team_name = 'New York Yankees' WHERE team_id = 'nya';
-update Teams set team_name = 'New York Mets' WHERE team_id = 'nyn';
-update Teams set team_name = 'Oakland Athletics' WHERE team_id = 'oak';
-update Teams set team_name = 'Philadelphia Phillies' WHERE team_id = 'phi';
-update Teams set team_name = 'Pittsburgh Pirates' WHERE team_id = 'pit';
-update Teams set team_name = 'San Diego Padres' WHERE team_id = 'sdn';
-update Teams set team_name = 'Seattle Mariners' WHERE team_id = 'sea';
-update Teams set team_name = 'San Francisco Giants' WHERE team_id = 'sfn';
-update Teams set team_name = 'St. Louis Cardinals' WHERE team_id = 'sln';
-update Teams set team_name = 'Tampa Bay Rays' WHERE team_id = 'tba';
-update Teams set team_name = 'Texas Rangers' WHERE team_id = 'tex';
-update Teams set team_name = 'Toronto Blue Jays' WHERE team_id = 'tor';
-update Teams set team_name = 'Washington Nationals' WHERE team_id = 'was';
-
-
-
-
--- Venue -------------------------------------------------------------------
+-- Game Team Stats-------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create GameTeamStats' as '';
 create table GameTeamStats(
@@ -433,6 +438,7 @@ END
 DROP TABLE GameTeamStats2;
 
 
+-- Game Pitcher Stats-------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create GamePitcherStats' as '';
 create table GamePitcherStats(
