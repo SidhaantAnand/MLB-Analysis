@@ -389,3 +389,28 @@ update GameTeamStats set outs = (SELECT countOuts FROM outCounts WHERE outCounts
 WITH filteredAway AS (SELECT g_id FROM Ejections WHERE Ejections.is_home_team = 'FALSE'),
 outsCount AS (SELECT COUNT(*) AS countOuts, filteredHome.g_id FROM filteredHome GROUP BY g_id )
 update GameTeamStats set outs = (SELECT countOuts FROM outCounts WHERE outCounts.g_id = GameTeamStats.g_id);
+
+
+select '----------------------------------------------------------------' as '';
+select 'Create GamePitcherStats' as '';
+create table GamePitcherStats(
+	pitcher_id decimal(6),
+	g_id decimal(9),
+	team_id char(3),
+	num_pitches decimal(4),
+	avg_spin_rate decimal(7, 3),
+	avg_spin_dir decimal(6, 3),
+	most_common_zone decimal(2),
+	avg_start_speed decimal(4, 1),
+	total_b_counts decimal(3),
+	total_s_counts decimal(3)
+);
+
+insert into GamePitcherStats(pitcher_id, g_id, num_pitches, avg_spin_rate, avg_spin_dir, avg_start_speed, total_b_counts, total_s_counts) 
+select pitcher_id, g_id, count(*), avg(spin_rate), avg(spin_dir), avg(start_speed), sum(b_count), sum(s_count) 
+from AtBats inner join Pitches using (ab_id) group by pitcher_id, g_id;
+
+with A as
+    (select pitcher_id, g_id, zone, count(*) as pitches_in_zone from AtBats inner join Pitches using (ab_id) group by pitcher_id, g_id, zone)
+update GamePitcherStats as G
+set most_common_zone = (select zone from A where G.pitcher_id = A.pitcher_id and G.g_id = A.g_id order by pitches_in_zone desc limit 1);
