@@ -1,6 +1,6 @@
 warnings;
 drop table if exists GamePitcherStats;
-drop table if exists GameTeamsStats;
+drop table if exists GameTeamStats;
 drop table if exists GameBatterStats;
 drop table if exists GameUmpireStats;
 drop table if exists Venue;
@@ -13,35 +13,11 @@ drop table if exists Games;
 drop table if exists Umpires;
 
 
--- Umpires -------------------------------------------------------------------
-select '----------------------------------------------------------------' as '';
-select 'Create Umpires' as '';
-create table Umpires (umpire_id int not null auto_increment,
-			first_name char(20) not null,
-			last_name char(20) not null,
--- Constraints	    
-		    primary key (umpire_id)
-		);
-insert into Umpires (first_name, last_name)
-	(select substring(umpire_1B, 1, locate(' ', umpire_1B)), substring(umpire_1B, locate(' ', umpire_1B) + 1) from Games group by umpire_1B);
-
-insert into Umpires (first_name, last_name)
-	(select substring(umpire_2B, 1, locate(' ', umpire_2B)), substring(umpire_2B, locate(' ', umpire_2B) + 1) from Games 
-	where not exists (select first_name, last_name from Umpires) group by umpire_2B);
-
-insert into Umpires (first_name, last_name)
-	(select substring(umpire_3B, 1, locate(' ', umpire_3B)), substring(umpire_3B, locate(' ', umpire_3B) + 1) from Games 
-	where not exists (select first_name, last_name from Umpires) group by umpire_3B);
-
-insert into Umpires (first_name, last_name)
-	(select substring(umpire_HP, 1, locate(' ', umpire_HP)), substring(umpire_HP, locate(' ', umpire_HP) + 1) from Games 
-	where not exists (select first_name, last_name from Umpires) group by umpire_HP);
-
-
 -- Games -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create Games' as '';
-create table Games (attendance decimal(5) check (attendance >= 0),
+create table Games (
+			attendance decimal(5) check (attendance >= 0),
 			away_final_score decimal(2) not null check (away_final_score >= 0),
 			away_team char(3) not null,
 			date datetime,
@@ -50,10 +26,10 @@ create table Games (attendance decimal(5) check (attendance >= 0),
 			home_final_score decimal(2) not null check (home_final_score >= 0),
 			home_team char(3) not null,
 			start_time varchar(10) not null check (start_time REGEXP '[0-9]:[0-9][0-9] [A|P][M]'),
-			umpire_1B varchar(300),
-			umpire_2B varchar(300),
-			umpire_3B varchar(300),
-			umpire_HP varchar(300),
+			umpire_1B char(100),
+			umpire_2B char(100),
+			umpire_3B char(100),
+			umpire_HP char(100),
 			venue_name varchar(300),
 			weather varchar(300) not null check (weather REGEXP '[0-9]+ degrees, (clear|sunny|overcast|cloudy|partly cloudy|snow|drizzle|dome|roof closed|rain)'),
 			wind varchar(300) not null check (wind REGEXP '[0-9]+ mph,.*') ,
@@ -69,6 +45,39 @@ load data infile '/var/lib/mysql-files/MLB/games.csv' ignore into table Games
      ignore 1 lines
 	(attendance,away_final_score,away_team,date,elapsed_time,g_id,home_final_score,home_team,start_time,umpire_1B,umpire_2B,umpire_3B,umpire_HP,venue_name,weather,wind,delay);
 
+
+-- Umpires -------------------------------------------------------------------
+select '----------------------------------------------------------------' as '';
+select 'Create Umpires' as '';
+create table Umpires (
+			umpire_id int not null auto_increment,
+			first_name char(50) not null,
+			last_name char(50) not null,
+			full_name char(100) not null,
+-- Constraints	    
+		    primary key (umpire_id),
+			unique(full_name)
+		);
+insert into Umpires (full_name, first_name, last_name)
+	(select umpire_1B, substring(umpire_1B, 1, locate(' ', umpire_1B)), substring(umpire_1B, locate(' ', umpire_1B) + 1) from Games 
+	where umpire_1B NOT IN (select full_name from Umpires) group by umpire_1B);
+
+insert into Umpires (full_name, first_name, last_name)
+	(select umpire_2B, substring(umpire_2B, 1, locate(' ', umpire_2B)), substring(umpire_2B, locate(' ', umpire_2B) + 1) from Games 
+	where umpire_2B NOT IN (select full_name from Umpires) group by umpire_2B);
+
+insert into Umpires (full_name, first_name, last_name)
+	(select umpire_3B, substring(umpire_3B, 1, locate(' ', umpire_3B)), substring(umpire_3B, locate(' ', umpire_3B) + 1) from Games 
+	where umpire_3B NOT IN (select full_name from Umpires) group by umpire_3B);
+
+insert into Umpires (full_name, first_name, last_name)
+	(select umpire_HP, substring(umpire_HP, 1, locate(' ', umpire_HP)), substring(umpire_HP, locate(' ', umpire_HP) + 1) from Games 
+	where umpire_HP NOT IN (select full_name from Umpires) group by umpire_HP);
+
+alter table Games add foreign key (umpire_1B) references Umpires(full_name);
+alter table Games add foreign key (umpire_2B) references Umpires(full_name);
+alter table Games add foreign key (umpire_3B) references Umpires(full_name);
+alter table Games add foreign key (umpire_HP) references Umpires(full_name);
 
 -- Teams -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
@@ -111,12 +120,14 @@ update Teams set team_name = 'Texas Rangers' WHERE team_id = 'tex';
 update Teams set team_name = 'Toronto Blue Jays' WHERE team_id = 'tor';
 update Teams set team_name = 'Washington Nationals' WHERE team_id = 'was';
 
-
+-- alter table Games add foreign key(home_team) references Teams(team_id);
+-- alter table Games add foreign key(away_team) references Teams(team_id);
 -- Players -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create Players' as '';
 
-create table Players (player_id decimal(6),
+create table Players (
+			player_id decimal(6),
 			first_name char(20) not null,
 			last_name char(20) not null,
 -- Constraints	    
@@ -130,11 +141,12 @@ load data infile '/var/lib/mysql-files/MLB/player_names.csv' ignore into table P
      (player_id, first_name, last_name);
 
 
--- At Bat -------------------------------------------------------------------
+-- At Bats -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create AtBats' as '';
 
-create table AtBats (ab_id decimal(10),
+create table AtBats (
+			ab_id decimal(10),
 			batter_id decimal(6),
 			event char(20),
 			g_id decimal(9) not null,
@@ -159,6 +171,7 @@ load data infile '/var/lib/mysql-files/MLB/atbats.csv' ignore into table AtBats
 	lines terminated by '\n'
 	ignore 1 lines
 	(
+	ab_id,
 	batter_id,
 	event,
 	g_id,
@@ -168,7 +181,7 @@ load data infile '/var/lib/mysql-files/MLB/atbats.csv' ignore into table AtBats
 	p_throws,
 	pitcher_id,
 	stand,
-	@top boolean
+	@top
 	)
 	set
 		top = if (@top = 'True', true, false);
@@ -257,7 +270,8 @@ load data infile '/var/lib/mysql-files/MLB/pitches.csv' ignore into table Pitche
 -- Ejections -------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create Ejections' as '';
-create table Ejections (ab_id decimal(10),
+create table Ejections (
+			ab_id decimal(10),
 			g_id decimal(9) not null,
 			event_num decimal(4),
 			bs char(1),
@@ -297,15 +311,19 @@ select 'Create Venue' as '';
 create table Venue(
 	venue_id int  NOT NULL AUTO_INCREMENT,
 	venue_name varchar(300),
-	primary key(venue_id)
+	primary key(venue_id),
+	unique(venue_name)
 );
 insert into Venue (venue_name) ( SELECT distinct venue_name FROM Games);
 
+-- alter table Games add foreign key(venue_name) references Venue(venue_name)
 
---Game Umpire Stats-------------------------------------------------------------------
+
+-- Game Umpire Stats -------------------------------------------------------
 select '----------------------------------------------------------------' as '';
 select 'Create GameUmpireStats' as '';
-create table GameUmpireStats (umpire_id int,
+create table GameUmpireStats (
+			umpire_id int,
 			g_id decimal(9),
 			position char(2),
 			ejections decimal(2),
@@ -358,7 +376,8 @@ update GameUmpireStats
 select '----------------------------------------------------------------' as '';
 select 'Create GameBatterStats' as '';
 
-create table GameBatterStats (batter_id decimal(6),
+create table GameBatterStats (
+			batter_id decimal(6),
 			g_id decimal(9),
 			team_id char(3),
 			outs decimal(2),
@@ -380,12 +399,12 @@ update GameBatterStats
 update GameBatterStats
 	inner join AtBats on AtBats.g_id = GameBatterStats.g_id and AtBats.batter_id = GameBatterStats.batter_id
 	inner join Games on Games.g_id = AtBats.g_id
-	set GameBatterStats.team_id = Games.away_team where AtBats.top = 'True';
+	set GameBatterStats.team_id = Games.away_team where AtBats.top = true;
 
 update GameBatterStats
 	inner join AtBats on AtBats.g_id = GameBatterStats.g_id and AtBats.batter_id = GameBatterStats.batter_id
 	inner join Games on Games.g_id = AtBats.g_id
-	set GameBatterStats.team_id = Games.home_team where AtBats.top = 'False';
+	set GameBatterStats.team_id = Games.home_team where AtBats.top = false;
 
 
 -- Game Team Stats-------------------------------------------------------------------
@@ -395,7 +414,7 @@ create table GameTeamStats(
 	g_id decimal(9) not null,
 	team_id char(3) not null,
 	venue_id int,
-	is_home_team decimal(1),
+	is_home_team boolean,
 	won char(1),
 	final_score decimal(2),
 	ejections decimal(2),
@@ -404,34 +423,33 @@ create table GameTeamStats(
 	primary key(g_id,team_id)
 );
 
+insert into GameTeamStats(g_id,team_id,final_score,delay,is_home_team)
+( SELECT g_id,home_team AS team_id,home_final_score AS final_score,delay,true FROM Games);
 
 insert into GameTeamStats(g_id,team_id,final_score,delay,is_home_team)
-( SELECT g_id,home_team AS team_id,home_final_score AS final_score,delay,1 FROM Games);
-
-insert into GameTeamStats(g_id,team_id,final_score,delay,is_home_team)
-( SELECT g_id,away_team AS team_id,away_final_score AS final_score,delay,0 FROM Games);
+( SELECT g_id,away_team AS team_id,away_final_score AS final_score,delay,false FROM Games);
 
 WITH venueGameJoin AS (SELECT Venue.venue_id,Venue.venue_name,Games.g_id AS g_id FROM Venue INNER JOIN Games USING(venue_name))
 update GameTeamStats set venue_id = (SELECT venue_id FROM venueGameJoin WHERE GameTeamStats.g_id = venueGameJoin.g_id );
 
-WITH filteredHome AS (SELECT g_id FROM Ejections WHERE Ejections.is_home_team = 'TRUE'),
+WITH filteredHome AS (SELECT g_id FROM Ejections WHERE Ejections.is_home_team = true),
 outsCount AS (SELECT COUNT(*) AS countOuts, filteredHome.g_id FROM filteredHome GROUP BY g_id )
 update GameTeamStats set outs = (SELECT countOuts FROM outsCount WHERE outsCount.g_id = GameTeamStats.g_id);
 
 
-WITH filteredAway AS (SELECT g_id FROM Ejections WHERE Ejections.is_home_team = 'FALSE'),
+WITH filteredAway AS (SELECT g_id FROM Ejections WHERE Ejections.is_home_team = false),
 outsCount AS (SELECT COUNT(*) AS countOuts, filteredAway.g_id FROM filteredAway GROUP BY g_id )
 update GameTeamStats set outs = (SELECT countOuts FROM outsCount WHERE outsCount.g_id = GameTeamStats.g_id);
 
-CREATE TEMPORARY TABLE GameTeamStats2 LIKE   GameTeamStats;
+CREATE TABLE GameTeamStats2 LIKE GameTeamStats;
 insert into GameTeamStats2 ( SELECT * FROM GameTeamStats );
 UPDATE GameTeamStats AS t1 set t1.won = (
-CASE 
-	WHEN t1.final_score > (SELECT t2.final_score FROM GameTeamStats2 AS t2 WHERE t1.g_id = t2.g_id and t1.team_id != t2.team_id)
+CASE
+	WHEN t1.final_score > (SELECT final_score FROM GameTeamStats2 AS t2 WHERE t1.g_id = t2.g_id and t1.team_id != t2.team_id)
 	THEN 'W'
-	WHEN t1.final_score = (SELECT t2.final_score FROM GameTeamStats2 AS t2 WHERE t1.g_id = t2.g_id and t1.team_id != t2.team_id)
+	WHEN t1.final_score = (SELECT final_score FROM GameTeamStats2 AS t2 WHERE t1.g_id = t2.g_id and t1.team_id != t2.team_id)
 	THEN 'D'
-	ELSE 
+	ELSE
 	'L'
 END
 );
@@ -452,10 +470,11 @@ create table GamePitcherStats(
 	avg_start_speed decimal(4, 1),
 	total_b_counts decimal(3),
 	total_s_counts decimal(3)
+--	foreign key(team_id) references Teams(team_id)
 );
 
 insert into GamePitcherStats(pitcher_id, g_id, team_id, num_pitches, avg_spin_rate, avg_spin_dir, avg_start_speed, total_b_counts, total_s_counts)
-select pitcher_id, g_id, if(top = 'True', (select away_team from Games where AtBats.g_id = Games.g_id), (select home_team from Games where AtBats.g_id = Games.g_id)),
+select pitcher_id, g_id, if(top = true, (select away_team from Games where AtBats.g_id = Games.g_id), (select home_team from Games where AtBats.g_id = Games.g_id)),
        count(*), avg(spin_rate), avg(spin_dir), avg(start_speed), sum(b_count), sum(s_count)
 from AtBats inner join Pitches using (ab_id) group by pitcher_id, g_id, top;
 
