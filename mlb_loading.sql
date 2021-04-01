@@ -363,7 +363,7 @@ create table GameTeamStats(
 	team_id char(3) not null,
 	venue_id int,
 	is_home_team decimal(1),
-	won decimal(1),
+	won char(1),
 	final_score decimal(2),
 	ejections decimal(2),
 	outs decimal(2),
@@ -383,12 +383,26 @@ update GameTeamStats set venue_id = (SELECT venue_id FROM venueGameJoin WHERE Ga
 
 WITH filteredHome AS (SELECT g_id FROM Ejections WHERE Ejections.is_home_team = 'TRUE'),
 outsCount AS (SELECT COUNT(*) AS countOuts, filteredHome.g_id FROM filteredHome GROUP BY g_id )
-update GameTeamStats set outs = (SELECT countOuts FROM outCounts WHERE outCounts.g_id = GameTeamStats.g_id);
+update GameTeamStats set outs = (SELECT countOuts FROM outsCount WHERE outsCount.g_id = GameTeamStats.g_id);
 
 
 WITH filteredAway AS (SELECT g_id FROM Ejections WHERE Ejections.is_home_team = 'FALSE'),
-outsCount AS (SELECT COUNT(*) AS countOuts, filteredHome.g_id FROM filteredHome GROUP BY g_id )
-update GameTeamStats set outs = (SELECT countOuts FROM outCounts WHERE outCounts.g_id = GameTeamStats.g_id);
+outsCount AS (SELECT COUNT(*) AS countOuts, filteredAway.g_id FROM filteredAway GROUP BY g_id )
+update GameTeamStats set outs = (SELECT countOuts FROM outsCount WHERE outsCount.g_id = GameTeamStats.g_id);
+
+CREATE TEMPORARY TABLE GameTeamStats2 LIKE   GameTeamStats;
+insert into GameTeamStats2 ( SELECT * FROM GameTeamStats );
+UPDATE GameTeamStats AS t1 set t1.won = (
+CASE 
+	WHEN t1.final_score > (SELECT t2.final_score FROM GameTeamStats2 AS t2 WHERE t1.g_id = t2.g_id and t1.team_id != t2.team_id)
+	THEN 'W'
+	WHEN t1.final_score = (SELECT t2.final_score FROM GameTeamStats2 AS t2 WHERE t1.g_id = t2.g_id and t1.team_id != t2.team_id)
+	THEN 'D'
+	ELSE 
+	'L'
+END
+);
+DROP TABLE GameTeamStats2;
 
 
 select '----------------------------------------------------------------' as '';
