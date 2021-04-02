@@ -12,8 +12,8 @@ mycursor = mydb.cursor()
 # place holder values - should be set by the client application
 player_name = "Matt Carpenter"
 player_name_split = player_name.split()
-# sql queries
 
+# sql queries
 # (num_ejections)
 player_ejections_sql = f"""with playerId as
     (select player_id from Players where 
@@ -50,7 +50,7 @@ player_stand_sql = f"""with playerId as
     order by count(stand) desc
     limit 1;"""
 
-#(best pitch type - w the least number of strikes)
+# (best pitch type - w the least number of strikes)
 player_best_pitch_type_sql = f"""with playerId as
     (select player_id from Players where 
     first_name = '{player_name_split[0]}' and last_name = '{player_name_split[1]}')
@@ -62,7 +62,7 @@ player_best_pitch_type_sql = f"""with playerId as
     order by count(pitch_type)/sum(b_count) desc
     limit 1;"""
 
-#(worst pitch type - w the most number of strikes)
+# (worst pitch type - w the most number of strikes)
 player_worst_pitch_type_sql = f"""with playerId as
     (select player_id from Players where 
     first_name = '{player_name_split[0]}' and last_name = '{player_name_split[1]}')
