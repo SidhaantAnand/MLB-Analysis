@@ -74,8 +74,28 @@ player_worst_pitch_type_sql = f"""with playerId as
     order by count(pitch_type)/sum(b_count) desc
     limit 1;"""
 
+# (best batter)
+best_batter_sql = f"""with playerId as
+    (select player_id, concat(first_name, ' ', last_name) as full_name from Players)
+    select full_name from playerId
+    inner join AtBats on AtBats.batter_id =  playerId.player_id
+    inner join Pitches on AtBats.ab_id = Pitches.ab_id
+    group by full_name
+    order by sum(b_count)/sum(s_count) desc
+    limit 1;"""
+
+# (worst batter)
+worst_batter_sql = f"""with playerId as
+    (select player_id, concat(first_name, ' ', last_name) as full_name from Players)
+    select full_name from playerId
+    inner join AtBats on AtBats.batter_id =  playerId.player_id
+    inner join Pitches on AtBats.ab_id = Pitches.ab_id
+    group by full_name
+    order by sum(b_count)/sum(s_count)
+    limit 1;"""
+
 # printing results - can print whatever query, more for the client side to handle
-mycursor.execute(player_worst_pitch_type_sql)
+mycursor.execute(worst_batter_sql)
 myresult = mycursor.fetchall()
 for x in myresult:
     print(x)

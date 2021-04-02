@@ -57,3 +57,23 @@ where code != 'B' and code != '*B'
 group by pitch_type
 order by count(pitch_type)/sum(b_count) desc
 limit 1;
+
+-- (best batter)
+with playerId as
+(select player_id, concat(first_name, ' ', last_name) as full_name from Players)
+select full_name from playerId
+inner join AtBats on AtBats.batter_id =  playerId.player_id
+inner join Pitches on AtBats.ab_id = Pitches.ab_id
+group by full_name
+order by sum(b_count)/sum(s_count) desc
+limit 1;
+
+-- (worst batter)
+with playerId as
+(select player_id, concat(first_name, ' ', last_name) as full_name from Players)
+select full_name from playerId
+inner join AtBats on AtBats.batter_id =  playerId.player_id
+inner join Pitches on AtBats.ab_id = Pitches.ab_id
+group by full_name
+order by sum(b_count)/sum(s_count)
+limit 1;
