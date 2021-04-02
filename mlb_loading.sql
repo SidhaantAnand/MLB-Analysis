@@ -388,7 +388,7 @@ create table GameBatterStats (
 		);
 
 insert into GameBatterStats(batter_id, g_id, outs)
-	(select batter_id, g_id, sum(o) from AtBats group by batter_id, g_id);
+	(select batter_id, g_id, count(o) from AtBats group by batter_id, g_id);
 
 update GameBatterStats
 	inner join AtBats on AtBats.g_id = GameBatterStats.g_id and AtBats.batter_id = GameBatterStats.batter_id
