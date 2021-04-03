@@ -381,14 +381,16 @@ create table GameBatterStats (
 			g_id decimal(9),
 			team_id char(3),
 			outs decimal(2),
+			hits decimal(3),
+			home_runs decimal(3),
             primary key(g_id, batter_id),
             foreign key (batter_id) references Players(player_id),
             foreign key (g_id) references Games(g_id),
             foreign key (team_id) references Teams(team_id)
 		);
 
-insert into GameBatterStats(batter_id, g_id, outs)
-	(select batter_id, g_id, count(o) from AtBats group by batter_id, g_id);
+insert into GameBatterStats(batter_id, g_id, outs, hits, home_runs)
+	(select batter_id, g_id, count(o), 0, 0 from AtBats group by batter_id, g_id);
 
 update GameBatterStats
 	inner join AtBats on AtBats.g_id = GameBatterStats.g_id and AtBats.batter_id = GameBatterStats.batter_id
@@ -400,6 +402,33 @@ update GameBatterStats
 	inner join Games on Games.g_id = AtBats.g_id
 	set GameBatterStats.team_id = Games.home_team where AtBats.top = false;
 
+create temporary table BatterHits (
+			batter_id decimal(6),
+			g_id decimal(9),
+			hits decimal(3),
+            primary key(g_id, batter_id)
+		);
+
+insert into BatterHits(batter_id, g_id, hits)
+	(select batter_id, g_id, count(*) as hits from AtBats where event = 'Single' or event = 'Double' or event = 'Triple' or event = 'Home Run' group by batter_id, g_id);
+
+create temporary table BatterHomeRuns (
+			batter_id decimal(6),
+			g_id decimal(9),
+			home_runs decimal(3),
+            primary key(g_id, batter_id)
+		);
+
+insert into BatterHomeRuns(batter_id, g_id, home_runs)
+	(select batter_id, g_id, count(*) as hits from AtBats where event = 'Home Run' group by batter_id, g_id);
+
+update GameBatterStats
+	inner join BatterHits on BatterHits.g_id = GameBatterStats.g_id and BatterHits.batter_id = GameBatterStats.batter_id
+	set GameBatterStats.hits = BatterHits.hits;
+
+update GameBatterStats
+	inner join BatterHomeRuns on BatterHomeRuns.g_id = GameBatterStats.g_id and BatterHomeRuns.batter_id = GameBatterStats.batter_id
+	set GameBatterStats.home_runs = BatterHomeRuns.home_runs;
 
 -- Game Team Stats-------------------------------------------------------------------
 select '----------------------------------------------------------------' as '';
