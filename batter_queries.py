@@ -1,14 +1,3 @@
-import mysql.connector
-
-mydb = mysql.connector.connect(
-  host="99.250.146.93",
-  user="root",
-  password="MLB_Gang",
-  database="MLB"
-)
-
-mycursor = mydb.cursor()
-
 # place holder values - should be set by the client application
 player_name = "Matt Carpenter"
 player_name_split = player_name.split()

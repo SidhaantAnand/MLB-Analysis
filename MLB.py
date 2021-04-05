@@ -1,4 +1,5 @@
 def main():
+    cursor = get_cursor()
     print('What would you like to do?')
     print('1. View Stats')
     print('2. Add Data')
@@ -15,7 +16,6 @@ def main():
         if option < 1 or option > 2:
             print('Invalid option, please choose 1 or 2')
             continue
-
         break
 
 
