@@ -59,3 +59,7 @@ SELECT COUNT(*) AS tot_games_with_delay,venue_name FROM Games WHERE delay > 0 GR
 WITH delayCount AS ( SELECT count(*) AS delay_count,venue_name FROM Games WHERE delay > 0 GROUP BY venue_name ),
 MAxdelayCount AS (SELECT delay_count,venue_name FROM delayCount ORDER BY delay_count DESC LIMIT 1)
 SELECT CONCAT(venue_name, " has games with ", delay_count) AS Answer FROM MAxdelayCount;
+
+
+-- Average temperature per Venue
+WITH tempExtracted AS ( SELECT venue_name, CAST(SUBSTRING(weather,1,LOCATE(' ',weather)-1) AS Signed) AS temp FROM Games)
