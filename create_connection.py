@@ -7,4 +7,4 @@ def get_cursor():
 	  password="MLB_Gang",
 	  database="MLB"
 	)
-	return mydb.cursor()
+	return mydb, mydb.cursor()
