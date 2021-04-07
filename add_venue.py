@@ -30,8 +30,8 @@ def delete_new_venue(mydb, mycursor, venue_id):
     return mycursor.rowcount
 
 def add_new_venue(mydb, mycursor):
-    venue_name = input('Enter VenueName: ')
-    venue_data = ({'venueId': -1, 'venue_name': venue_name})
+    venue_name = input('Enter Venue Name: ')
+    venue_data = ({'venue_id': -1, 'venue_name': venue_name})
     result, new_id = insert_new_venue(mydb, mycursor, venue_data)
     if result == 0:
         print('Sorry the data could not be entered either due to either incorrect format or duplicate values')
