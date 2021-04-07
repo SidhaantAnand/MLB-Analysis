@@ -15,7 +15,12 @@ def update_new_team(mydb, mycursor, team_data, index, field):
                 set team_id = '{field}' where team_id = '{team_data['team_id']}'
                 and not exists (select * from temp_team where team_id = '{field}'); """
     if index == 1:
-        sql = f"""update Teams set team_name = '{field}' where team_id = '{team_data['team_id']}';"""
+        sql = f"""with temp_team as
+                (select * from Teams)
+                update Teams
+                inner join temp_team using(team_id)
+                set team_name = '{field}' where team_id = '{team_data['team_id']}'
+                and not exists (select * from temp_team where team_name = '{field}'); """
     mycursor.execute(sql)
     mydb.commit()
     myresult = mycursor.fetchall()

@@ -1,5 +1,6 @@
 import mysql.connector
 from add_team import add_new_team
+from add_venue import add_new_venue
 
 mydb = mysql.connector.connect(
   host="99.250.146.93",
