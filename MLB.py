@@ -22,6 +22,8 @@ def main():
             print('Invalid option, please choose 1 or 2')
             continue
         
+        if option == 1:
+            view_stats(cursor)
         if option == 2:
             add_user_data(mydb, cursor)
             continue
