@@ -3,29 +3,27 @@ def highest_home_score(cursor):
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def highest away score(cursor):
+def higher_than_away_score(cursor):
 	sql = '''select g_id, away_final_score from Games where away_final_score = (select max(away_final_score) from Games);'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-
-def highest combined score(cursor):
-	sql = '''select g_id, home_final_score, away_final_score from Games where
-    (home_final_score + away_final_score = (select max(home_final_score + Games.away_final_score) from Games));'''
-    cursor.execute(sql)
+def highest_combined_score(cursor):
+	sql = '''select g_id, home_final_score, away_final_score from Games where (home_final_score + away_final_score = (select max(home_final_score + Games.away_final_score) from Games));'''
+	cursor.execute(sql)
 	return cursor.fetchall()
 
-def highest attendance(cursor):
+def highest_attendance(cursor):
 	sql = '''select g_id, attendance from Games where attendance = (select max(attendance) from Games);'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def lowest attendance(cursor):
+def lowest_attendance(cursor):
 	sql = '''select g_id, attendance from Games where attendance = (select min(attendance) from Games);'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def higher_than_home score(cursor,val)
+def higher_than_home_score(cursor,val):
 	sql = '''select count(*) from Games where home_final_score > {val};'''
 	sql = sql.format(val=val)
 	cursor.execute(sql)
@@ -52,7 +50,7 @@ def Shortest_game_elapsed_time(cursor):
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def Longest winning streak(mydb,cursor):
+def Longest_winning_streak(mydb,cursor):
 	sql = '''set @seq:=0;'''
 	cursor.execute(sql)
 	mydb.commit()

@@ -30,7 +30,7 @@ SELECT * FROM teamMerged;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def best_team_to_play_against(cusor,team):
+def best_team_to_play_against(cursor,team):
 	sql = '''WITH filterTeam AS (SELECT * FROM GameTeamStats WHERE team_id = \'{team}\'),
 noFilterTeam AS ( SELECT * FROM GameTeamStats WHERE team_id != \'{team}\'),
 meh AS (SELECT noFilterTeam.team_id, filterTeam.won FROM filterTeam INNER JOIN noFilterTeam USING (g_id)),

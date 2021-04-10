@@ -22,7 +22,7 @@ SELECT distinct CONCAT(HOME_TEAM, \" vs \", AWAY_TEAM, \" with attendance = \", 
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def best_attendance_ever(cursor)
+def best_attendance_ever(cursor):
 	sql = '''WITH MaxAttendanceGame AS (SELECT home_team,away_team,attendance,venue_name FROM Games ORDER BY attendance DESC LIMIT 1),
 JoinHomeAttendance AS (SELECT MaxAttendanceGame.venue_name, MaxAttendanceGame.away_team, MaxAttendanceGame.attendance,Teams.team_name AS HOME_TEAM FROM MaxAttendanceGame INNER JOIN Teams ON MaxAttendanceGame.home_team = Teams.team_id),
 JoinAwayAttendance AS (SELECT JoinHomeAttendance.venue_name, JoinHomeAttendance.HOME_TEAM, JoinHomeAttendance.attendance,Teams.team_name AS AWAY_TEAM FROM JoinHomeAttendance INNER JOIN Teams ON JoinHomeAttendance.away_team = Teams.team_id)
@@ -77,14 +77,12 @@ SELECT CONCAT(venue_name, \" => \" , HOME_TEAM, \" vs \", AWAY_TEAM, \" => \", h
 	cursor.execute(sql)
 	return cursor.fetchall()
 
--- number of delayed games per venue
 def delay_games_per_venue(cursor,venue_name):
 	sql = '''SELECT COUNT(*) AS tot_games_with_delay,venue_name FROM Games WHERE delay > 0 WHERE venue_name = \'{venue_name}\';'''
 	sql = sql.format(venue_name = venue_name)
 	cursor.execute(sql)
 	return cursor.fetchall()
 
--- Venue with the most delayed games
 def most_delayed_games(cursor):
 	sql = '''WITH delayCount AS ( SELECT count(*) AS delay_count,venue_name FROM Games WHERE delay > 0 GROUP BY venue_name ),
 MAxdelayCount AS (SELECT delay_count,venue_name FROM delayCount ORDER BY delay_count DESC LIMIT 1)

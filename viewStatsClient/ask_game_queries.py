@@ -1,2 +1,13 @@
 def ask_game(mydb,cursor):
-	return
+    print("1. highest_home_score")
+    print("2. higher_than_away_score")
+    print("3. highest_combined_score")
+    print("4. highest_attendance")
+    print("5. lowest_attendance")
+    print("6. higher_than_home_score")
+    print("7. higher_than_away_score")
+    print("8. Longest_game_elapsed_time")
+    print("9. Longest_game_innings")
+    print("10. Shortest_game_elapsed_time")
+    print("11. Longest_winning_streak")
+    print("12. Longest_losing_streak")

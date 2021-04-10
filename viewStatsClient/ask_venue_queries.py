@@ -1,2 +1,14 @@
 def ask_venue(mydb,cursor):
-	return
+    print("1. avg_attendance_per_venue")
+    print("2. venue_with_most_average_attendance")
+    print("3. best_game_attendance_per_venue")
+    print("4. best_attendance_ever")
+    print("5. most_games_played_at_venue")
+    print("6. total_games_per_venue")
+    print("7. avergae_score_per_venue")
+    print("8. highest_average_across_all_venues")
+    print("9. highest_scoring_game_for_venue")
+    print("10. highest_scoring_games_across_all_venues")
+    print("11. delay_games_per_venue")
+    print("12. most_delayed_games")
+    print("13. avg_temp_per_venue")

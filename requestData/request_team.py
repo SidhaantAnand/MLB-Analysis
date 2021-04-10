@@ -6,8 +6,9 @@ def request_team(cursor):
 	for x in result:
 		teams.append(x[0])
 	while(True):
-		option = input('Enter a team')
-		if(not option in teams):
-			print("Incorrect team entered")
-		else:
+		option = raw_input('Enter a team: ')
+		option = str(option)
+		if(option in teams):
 			return option
+		else:
+			print("Incorrect team entered")

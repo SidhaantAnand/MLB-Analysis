@@ -2,6 +2,8 @@ import sys
 
 
 sys.path.insert(1, './viewStatsClient')
+sys.path.insert(1, './searchPython')
+sys.path.insert(1, './requestData')
 
 from ask_batter_stats import ask_batter
 from ask_game_queries import ask_game
@@ -9,7 +11,7 @@ from ask_pitcher_stats import ask_pitcher
 from ask_team_stats import ask_team
 from ask_umpire_queries import ask_umpire
 from ask_venue_queries import ask_venue
-from add_data import add_user_data 
+#from add_data import add_user_data
 from create_connection import get_cursor
 
 def main():
@@ -20,7 +22,8 @@ def main():
         2: ask_game,
         3: ask_pitcher,
         4: ask_umpire,
-        5: ask_venue
+        5: ask_venue,
+        6: ask_team
     }
 
     stats_print_dict = {
@@ -28,7 +31,8 @@ def main():
         2: ". View Game stats",
         3: ". View Pitcher stats",
         4: ". View Umpire stats",
-        5: ". View Venue stats"
+        5: ". View Venue stats",
+        6: ". View Team stats"
     }
 
     while True:
@@ -55,21 +59,20 @@ def main():
                 print(str(x) + " " + stats_print_dict[x])
 
             while(True):
+                option = input('Enter your choice: ')
                 try:
                     option = int(option)
                 except ValueError:
                     print('Error: You must enter an integer between 1 and 5')
                     continue
-                if(not option in stats_dict):
+                if not option in stats_dict:
                     print('Error: You must enter an integer between 1 and 5')
                     continue
                 stats_dict[option](mydb,cursor)
                 break
         if option == 2:
-            add_user_data(mydb, cursor)
+            #add_user_data(mydb, cursor)
             continue
-
-        break
 
 
 if __name__ == '__main__':
