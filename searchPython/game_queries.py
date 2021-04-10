@@ -1,42 +1,63 @@
 def highest_home_score(cursor):
-	sql = '''select g_id, home_final_score from Games where home_final_score = (select max(home_final_score) from Games);'''
+	sql = '''
+	WITH tmp AS ( select home_team, away_team, date, home_final_score, away_final_score from Games where home_final_score = (select max(home_final_score) from Games) ),
+	homeJoined AS ( select team_name as home_team, away_team, date, home_final_score, away_final_score from tmp LEFT JOIN Teams ON tmp.home_team=Teams.team_id)
+	SELECT home_team, team_name as away_team, date, home_final_score, away_final_score FROM homeJoined LEFT JOIN Teams ON homeJoined.away_team = Teams.team_id;
+	
+	'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
 def higher_than_away_score(cursor):
-	sql = '''select g_id, away_final_score from Games where away_final_score = (select max(away_final_score) from Games);'''
+	sql = '''
+	WITH tmp AS ( select home_team, away_team, date, home_final_score, away_final_score from Games where away_final_score = (select max(away_final_score) from Games)),
+	homeJoined AS ( select team_name as home_team, away_team, date, home_final_score, away_final_score from tmp LEFT JOIN Teams ON tmp.home_team=Teams.team_id)
+	SELECT home_team, team_name as away_team, date, home_final_score, away_final_score FROM homeJoined LEFT JOIN Teams ON homeJoined.away_team = Teams.team_id;
+	'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
 def highest_combined_score(cursor):
-	sql = '''select g_id, home_final_score, away_final_score from Games where (home_final_score + away_final_score = (select max(home_final_score + Games.away_final_score) from Games));'''
+	sql = '''
+	WITH tmp AS ( select home_team, away_team, date, home_final_score, away_final_score from Games where (home_final_score + away_final_score = (select max(home_final_score + Games.away_final_score) from Games))),
+	homeJoined AS ( select team_name as home_team, away_team, date, home_final_score, away_final_score from tmp LEFT JOIN Teams ON tmp.home_team=Teams.team_id)
+	SELECT home_team, team_name as away_team, date, home_final_score, away_final_score FROM homeJoined LEFT JOIN Teams ON homeJoined.away_team = Teams.team_id;
+	'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
 def highest_attendance(cursor):
-	sql = '''select g_id, attendance from Games where attendance = (select max(attendance) from Games);'''
+	sql = '''
+	WITH tmp AS ( select home_team, away_team, date, attendance from Games where attendance = (select max(attendance) from Games) ),
+	homeJoined AS ( select team_name as home_team, away_team, date, attendance  from tmp LEFT JOIN Teams ON tmp.home_team=Teams.team_id)
+	SELECT home_team, team_name as away_team, date, attendance  FROM homeJoined LEFT JOIN Teams ON homeJoined.away_team = Teams.team_id;
+	'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
 def lowest_attendance(cursor):
-	sql = '''select g_id, attendance from Games where attendance = (select min(attendance) from Games);'''
+	sql = '''
+	WITH tmp AS ( select home_team, away_team, date, attendance from Games where attendance = (select min(attendance) from Games) ),
+	homeJoined AS ( select team_name as home_team, away_team, date, attendance  from tmp LEFT JOIN Teams ON tmp.home_team=Teams.team_id)
+	SELECT home_team, team_name as away_team, date, attendance  FROM homeJoined LEFT JOIN Teams ON homeJoined.away_team = Teams.team_id;
+	'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def higher_than_home_score(cursor,val):
+def higher_than_home_score_val(cursor,val):
 	sql = '''select count(*) from Games where home_final_score > {val};'''
 	sql = sql.format(val=val)
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def higher_than_away_score(cursor,val):
+def higher_than_away_score_val(cursor,val):
 	sql = '''select count(*) from Games where away_final_score > {val};'''
 	sql = sql.format(val=val)
 	cursor.execute(sql)
 	return cursor.fetchall()
 
 def Longest_game_elapsed_time(cursor):
-	sql = '''select g_id, elapsed_time from Games where elapsed_time = (select max(elapsed_time) from Games);'''
+	sql = '''select home_team, away_team, date, elapsed_time from Games where elapsed_time = (select max(elapsed_time) from Games);'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 

@@ -20,7 +20,7 @@ def ask_team(mydb,cursor):
 			print('Error: You must enter an integer between 1 and 9')
 			continue
 		if option < 1 or option > 9:
-			print('Invalid option, please choose 1 or 2')
+			print('Invalid option, please choose between 1 and 9')
 			continue
 
 		if(option == 1):
