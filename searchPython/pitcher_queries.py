@@ -67,7 +67,7 @@ select pitch_type, times_thrown from A where times_thrown = (select max(times_th
 def consolidated_stats_pitcher(cursor,player_id):
 	sql = '''select sum(total_s_counts), sum(total_b_counts), sum(num_pitches), avg(avg_spin_rate), avg(avg_spin_dir), avg(avg_start_speed)
     from GamePitcherStats where pitcher_id = {player_id};'''
-    sql = sql.format(player_id = player_id)
+	sql = sql.format(player_id = player_id)
 	cursor.execute(sql)
 	return cursor.fetchall()
 
