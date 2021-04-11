@@ -37,7 +37,7 @@ def highest_attendance(cursor):
 
 def lowest_attendance(cursor):
 	sql = '''
-	WITH tmp AS ( select home_team, away_team, date, attendance from Games where attendance = (select min(attendance) from Games) ),
+	WITH tmp AS ( select home_team, away_team, date, attendance from Games where attendance = (select min(attendance) from Games WHERE attendance > 0) ),
 	homeJoined AS ( select team_name as home_team, away_team, date, attendance  from tmp LEFT JOIN Teams ON tmp.home_team=Teams.team_id)
 	SELECT home_team, team_name as away_team, date, attendance  FROM homeJoined LEFT JOIN Teams ON homeJoined.away_team = Teams.team_id;
 	'''

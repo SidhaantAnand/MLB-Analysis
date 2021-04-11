@@ -41,18 +41,25 @@ def ask_game(mydb,cursor):
                 print(str(x[0]) + " vs " + str(x[1]) + " on " + str(x[2]) + " with score " + str(x[3]) + " : " + str(x[4]))
         elif (option == 4):
             result = highest_attendance(cursor)
-            print("These are games with highest attendance:")
+            print("These are games with highest attendance ie " + str(result[0][3]) + " : ")
             for x in result:
-                print(str(x[0]) + " vs " + str(x[1]) + " on " + str(x[2]) + " with attedance " + str(x[3]))
+                print(str(x[0]) + " vs " + str(x[1]) + " on " + str(x[2]))
         elif (option == 5):
             result = lowest_attendance(cursor)
-            print(str(x[0]) + " vs " + str(x[1]) + " on " + str(x[2]) + " with attedance " + str(x[3]))
+            print("These are games with lowest attendance ie " + str(result[0][3]) + " : ")
+            for x in result:
+                print(str(x[0]) + " vs " + str(x[1]) + " on " + str(x[2]))
         elif (option == 6):
-            result = higher_than_home_score_val(cursor)
+            result = higher_than_home_score_val(cursor,20)
+            print("Games with higher than home score " + str(result[0][0]))
         elif (option == 7):
-            result = higher_than_away_score_val(cursor)
+            result = higher_than_away_score_val(cursor,20)
+            print("Games with higher than away score " + str(result[0][0]))
         elif (option == 8):
             result = Longest_game_elapsed_time(cursor)
+            print("These are games with the longest elapsed time ie " + str(result[0][3]))
+            for x in result:
+                print(str(x[0]) + " vs " + str(x[1]) + " on " + str(x[2]))
         elif (option == 9):
             result = Longest_game_innings(cursor)
         elif (option == 9):
@@ -63,4 +70,4 @@ def ask_game(mydb,cursor):
             result = Longest_winning_streak(cursor)
         elif (option == 12):
             result = Longest_losing_streak(cursor)
-        continue
+        break
