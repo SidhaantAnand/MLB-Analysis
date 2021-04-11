@@ -27,21 +27,29 @@ def ask_batter(mydb,cursor):
         if(option == 1):
             player_name = request_player(cursor)
             result = player_ejections(cursor, player_name[0])
+            print('Total number of ejections for ' + str(player_name[0]) + ' is ' + str(result[0][0]))
         elif(option == 2):
             player_name = request_player(cursor)
             result = player_hits_outs(cursor, player_name[0])
+            print('Total number of outs for ' + str(player_name[0]) + ' is ' + str(result[0][0]))
+            print('Total number of hits for ' + str(player_name[0]) + ' is ' + str(result[0][1]))
+            print('Total number of homeruns for ' + str(player_name[0]) + ' is ' + str(result[0][2]))
         elif(option == 3):
             player_name = request_player(cursor)
             result = player_inning(cursor, player_name[0])
+            print(str(player_name[0]) + ' played the most at inning' + str(result[0][0]) + ' a total of ' + str(result[0][1]))
         elif (option == 4):
             player_name = request_player(cursor)
             result = player_stand(cursor, player_name[0])
+            print('Prefered side of ' + str(player_name[0]) + ' is ' + str(result[0][0]))
         elif (option == 5):
             player_name = request_player(cursor)
             result = player_best_pitch_type(cursor, player_name[0])
+            print('Best pitch for ' + str(player_name[0]) + ' to bat at is ' + str(result[0][0]))
         elif (option == 6):
-            player_name = request_player()
+            player_name = request_player(cursor)
             result = player_worst_pitch_type(cursor, player_name[0])
+            print('Worst pitch for ' + str(player_name[0]) + ' to bat at is ' + str(result[0][0]))
         elif (option == 7):
             result = best_batter_bsratio(cursor)
             print("These are the batters with the best bs ratio")
@@ -72,6 +80,3 @@ def ask_batter(mydb,cursor):
             print("These are the batters with the worst hrg ratio")
             for x in result:
                 print(x[0] + " with a hrg ratio of " + str(x[1]))
-        print(result)
-        continue
-
