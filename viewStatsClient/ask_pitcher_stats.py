@@ -12,16 +12,18 @@ def ask_pitcher(mydb,cursor):
     print("9. Preferred_throwing_side")
     print("10. Most_common_pitch_type")
     print("11. consolidated_stats_pitcher")
+    print("12. best_pitcher")
+    print("13. Worst_pitcher")
 
     while (True):
         option = input('Enter your choice: ')
         try:
             option = int(option)
         except ValueError:
-            print('Error: You must enter an integer between 1 and 12')
+            print('Error: You must enter an integer between 1 and 13')
             continue
-        if option < 1 or option > 11:
-            print('Invalid option, please choose between 1 and 12')
+        if option < 1 or option > 13:
+            print('Invalid option, please choose between 1 and 13')
             continue
 
         if(option == 1):
@@ -61,12 +63,21 @@ def ask_pitcher(mydb,cursor):
             player_name = request_player(cursor)
             result = Preferred_throwing_side(cursor,player_name[1])
             print(player_name[0] + ' preferred throwing side is ' + str(result[0][0]))
-            elif (option == 10):
+        elif (option == 10):
             player_name = request_player(cursor)
             result = Most_common_pitch_type(cursor,player_name[1])
             print(player_name[0] + ' pitches the most of type ' + str(result[0][0]) + ' with a total of ' + str(result[0][1]) + 'pitches')
         elif (option == 11):
             player_name = request_player(cursor)
             result = consolidated_stats_pitcher(cursor,player_name[1])
-        print(result)
-        continue
+        elif (option == 12):
+            result = best_pitcher(cursor)
+            print('Top 5 pitchers with the best strikeouts:pitches ratio')
+            for x in result:
+                print(str(x[0]) + ' with ratio ' + str(x[1]))
+        elif(option == 13):
+            result = Worst_pitcher(cursor)
+            print('Worst 5 pitchers with the best strikeouts:pitches ratio')
+            for x in result:
+                print(str(x[0]) + ' with ratio ' + str(x[1]))
+        return

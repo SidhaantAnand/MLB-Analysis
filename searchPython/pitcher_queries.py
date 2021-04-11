@@ -71,21 +71,23 @@ def consolidated_stats_pitcher(cursor,player_id):
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def best_ptiche(cursor,player_id):
+def best_pitcher(cursor):
 	sql = '''with A as (select pitcher_id, sum(num_pitches) as num_pitches from GamePitcherStats group by pitcher_id),
 B as (select pitcher_id, count(*) as num_strikeouts from AtBats where event = \'Strikeout\' group by pitcher_id),
-C as (select A.pitcher_id, B.num_strikeouts/A.num_pitches as ratio from A inner join B on A.pitcher_id = B.pitcher_id)
-select pitcher_id, ratio from C where ratio = (select max(ratio) from C);'''
-	sql = sql.format(player_id = player_id)
+C as (select A.pitcher_id, B.num_strikeouts/A.num_pitches as ratio from A inner join B on A.pitcher_id = B.pitcher_id),
+D as ( select pitcher_id, ratio from C ORDER BY ratio DESC  LIMIT 5)
+SELECT CONCAT(first_name, \" \", last_name) AS player_name, ratio FROM D LEFT JOIN Players ON D.pitcher_id = Players.player_id;
+;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def Worst_pitcher(cursor,player_id):
+def Worst_pitcher(cursor):
 	sql = '''with A as (select pitcher_id, sum(num_pitches) as num_pitches from GamePitcherStats group by pitcher_id),
 B as (select pitcher_id, count(*) as num_strikeouts from AtBats where event = \'Strikeout\' group by pitcher_id),
-C as (select A.pitcher_id, coalesce(B.num_strikeouts, 0)/A.num_pitches as ratio from A left join B on A.pitcher_id = B.pitcher_id)
-select pitcher_id, ratio from C where ratio = (select min(ratio) from C);'''
-	sql = sql.format(player_id = player_id)
+C as (select A.pitcher_id, coalesce(B.num_strikeouts, 0)/A.num_pitches as ratio from A left join B on A.pitcher_id = B.pitcher_id),
+D as ( select pitcher_id, ratio from C WHERE ratio != 0 AND ratio is NOT NULL ORDER BY ratio ASC  LIMIT 5)
+SELECT CONCAT(first_name, \" \", last_name) AS player_name, ratio FROM D LEFT JOIN Players ON D.pitcher_id = Players.player_id;
+;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
