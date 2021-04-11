@@ -8,7 +8,7 @@ SELECT avg_attendance FROM avgAtt WHERE venue_name = \'{venue_name}\';'''
 def venue_with_most_average_attendance(cursor):
 	sql = '''WITH AvgAttendance AS ( SELECT AVG(attendance) AS avg_attendance,venue_name FROM Games GROUP BY venue_name ),
 MAxAvgAttendance AS (SELECT avg_attendance,venue_name FROM AvgAttendance ORDER BY avg_attendance DESC LIMIT 1)
-SELECT CONCAT(venue_name, \" has the maximum avergae attendance with average attendance = \", avg_attendance) AS Answer FROM MAxAvgAttendance;'''
+SELECT CONCAT(venue_name, \" has the maximum average attendance with average attendance = \", avg_attendance) AS Answer FROM MAxAvgAttendance;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
@@ -44,7 +44,7 @@ def total_games_per_venue(cursor,venue_name):
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def avergae_score_per_venue(cursor,venue_name):
+def average_score_per_venue(cursor,venue_name):
 	sql = '''SELECT CONCAT(\"Average score at \", venue_name, \" is \" , avg(home_final_score + away_final_score)) AS Answer FROM Games WHERE venue_name = \'{venue_name}\';'''
 	sql = sql.format(venue_name = venue_name)
 	cursor.execute(sql)
