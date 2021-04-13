@@ -1,18 +1,12 @@
-import sys
-
-
-sys.path.insert(1, './viewStatsClient')
-sys.path.insert(1, './searchPython')
-sys.path.insert(1, './requestData')
-
-from ask_batter_stats import ask_batter
-from ask_game_queries import ask_game
-from ask_pitcher_stats import ask_pitcher
-from ask_team_stats import ask_team
-from ask_umpire_queries import ask_umpire
-from ask_venue_queries import ask_venue
+from viewStatsClient.ask_batter_stats import ask_batter
+from viewStatsClient.ask_game_queries import ask_game
+from viewStatsClient.ask_pitcher_stats import ask_pitcher
+from viewStatsClient.ask_team_stats import ask_team
+from viewStatsClient.ask_umpire_queries import ask_umpire
+from viewStatsClient.ask_venue_queries import ask_venue
 from add_data import add_user_data
 from create_connection import get_cursor
+
 
 def main():
     mydb, cursor = get_cursor()
@@ -36,13 +30,10 @@ def main():
     }
 
     while True:
-        option = 0
-        print('\n')
         print('What would you like to do?')
         print('1. View Stats')
         print('2. Add Data')
         option = input('Enter your choice: ')
-        print('\n')
         try:
             option = int(option)
         except ValueError:
