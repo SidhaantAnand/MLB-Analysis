@@ -36,7 +36,7 @@ def ask_venue(mydb,cursor):
         elif (option == 3):
             venue_name = request_venue(cursor)
             result = best_game_attendance_per_venue(cursor,venue_name)
-            print(result[0][0])
+            print('These are the games played at ' + str(venue_name) + ' with the most attendance')
         elif (option == 4):
             result = best_attendance_ever(cursor)
             print(result[0][0])

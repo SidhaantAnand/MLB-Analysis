@@ -17,7 +17,7 @@ def best_game_attendance_per_venue(cursor,venue_name):
 MaxAttendanceGame AS ( SELECT home_team,away_team, Games.attendance , Games.venue_name FROM Games INNER JOIN MaxAttendancePerVenue using (attendance,venue_name)),
 JoinHomeAttendance AS (SELECT MaxAttendanceGame.venue_name, MaxAttendanceGame.away_team, MaxAttendanceGame.attendance,Teams.team_name AS HOME_TEAM FROM MaxAttendanceGame INNER JOIN Teams ON MaxAttendanceGame.home_team = Teams.team_id),
 JoinAwayAttendance AS (SELECT JoinHomeAttendance.venue_name,JoinHomeAttendance.HOME_TEAM, JoinHomeAttendance.attendance,Teams.team_name AS AWAY_TEAM FROM JoinHomeAttendance INNER JOIN Teams ON JoinHomeAttendance.away_team = Teams.team_id)
-SELECT distinct CONCAT(HOME_TEAM, \" vs \", AWAY_TEAM, \" with attendance = \", attendance, \" at \", venue_name) AS Answer FROM JoinAwayAttendance WHERE venue_name = \'{venue_name}\';'''
+SELECT HOME_TEAM, AWAY_TEAM, attendance  FROM JoinAwayAttendance WHERE venue_name = \'{venue_name}\';'''
 	sql = sql.format(venue_name = venue_name)
 	cursor.execute(sql)
 	return cursor.fetchall()

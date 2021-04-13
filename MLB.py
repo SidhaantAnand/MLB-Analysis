@@ -11,7 +11,7 @@ from ask_pitcher_stats import ask_pitcher
 from ask_team_stats import ask_team
 from ask_umpire_queries import ask_umpire
 from ask_venue_queries import ask_venue
-#from add_data import add_user_data
+from add_data import add_user_data
 from create_connection import get_cursor
 
 def main():
@@ -71,7 +71,7 @@ def main():
                 stats_dict[option](mydb,cursor)
                 break
         if option == 2:
-            #add_user_data(mydb, cursor)
+            add_user_data(mydb, cursor)
             continue
 
 
