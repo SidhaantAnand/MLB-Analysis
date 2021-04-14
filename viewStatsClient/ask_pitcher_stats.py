@@ -3,19 +3,14 @@ from searchPython.pitcher_queries import *
 
 
 def ask_pitcher(mydb, cursor):
-    print("1. Number_of_strikes_pitched")
-    print("2. Number_of_strikeouts")
-    print("3. Number_of_balls_pitched")
-    print("4. Number_of_home_runs_allowed")
-    print("5. Total_pitches")
-    print("6. Average_spin_rate_and_direction")
-    print("7. Average_pitch_speed")
-    print("8. Most_common_zone_pitched")
-    print("9. Preferred_throwing_side")
-    print("10. Most_common_pitch_type")
-    print("11. consolidated_stats_pitcher")
-    print("12. best_pitcher")
-    print("13. Worst_pitcher")
+    print("1. Throwing stats")
+    print("2. Number of strikeouts")
+    print("3. Number of home runs allowed")
+    print("4. Most common zone pitched")
+    print("5. Preferred throwing side")
+    print("6. Most common pitch type")
+    print("7. Best pitcher (strikeouts:pitches)")
+    print("8. Worst pitcher (strikeouts:pitches)")
 
     while True:
         option = input('Enter your choice: ')
@@ -29,57 +24,54 @@ def ask_pitcher(mydb, cursor):
             continue
 
         if option == 1:
-            player_name = request_player(cursor)
-            result = Number_of_strikes_pitched(cursor,player_name[1])
-            print(player_name[0] + ' has pitched a total of ' + str(result[0][0]) + ' strikes')
+            player = request_player(cursor)
+            result = consolidated_stats_pitcher(cursor, player[1])
+            strikes = str(result[0])
+            balls = str(result[1])
+            pitches = str(result[2])
+            spin_rate = str(result[3])
+            spin_direction = str(result[4])
+            speed = str(result[5])
+
+            print(player[0] + ' has pitched ' + strikes + ' strikes and ' + balls + ' balls from ' + pitches + ' total pitches.')
+            print('He pitches at an average speed of ' + speed + ' mph, with the average pitch ' +
+                  'spinning at ' + spin_rate + ' revolutions per minute at an angle of ' + spin_direction + ' degrees.')
+
         elif option == 2:
-            player_name = request_player(cursor)
-            result = Number_of_strikeouts(cursor,player_name[1])
-            print(player_name[0] + ' has a total of ' + str(result[0][0]) + ' strikeouts')
+            player = request_player(cursor)
+            result = Number_of_strikeouts(cursor, player[1])
+            print(player[0] + ' has a total of ' + str(result[0][0]) + ' strikeouts')
+
         elif option == 3:
-            player_name = request_player(cursor)
-            result = Number_of_balls_pitched(cursor,player_name[1])
-            print(player_name[0] + ' has a total of ' + str(result[0][0]) + ' pitches')
+            player = request_player(cursor)
+            result = Number_of_home_runs_allowed(cursor, player[1])
+            print(player[0] + ' has allowed a total of ' + str(result[0][0]) + ' homeruns')
+
         elif option == 4:
-            player_name = request_player(cursor)
-            result = Number_of_home_runs_allowed(cursor,player_name[1])
-            print(player_name[0] + ' has allowed a total of ' + str(result[0][0]) + ' homeruns')
+            player = request_player(cursor)
+            result = Most_common_zone_pitched(cursor, player[1])
+            print(player[0] + ' pitches the most to zone ' + str(result[0][0]) + ' with a total of ' + str(result[0][1]) + ' pitches')
+
         elif option == 5:
-            player_name = request_player(cursor)
-            result = Total_pitches(cursor,player_name[1])
-            print(player_name[0] + ' has allowed a total of ' + str(result[0][0]) + ' pitches')
+            player = request_player(cursor)
+            result = Preferred_throwing_side(cursor, player[1])
+            print(player[0] + '\'s preferred throwing side is ' + str(result[0][0]))
+
         elif option == 6:
-            player_name = request_player(cursor)
-            result = Average_spin_rate_and_direction(cursor,player_name[1])
-            print(player_name[0] + ' has an average spin rate of ' + str(result[0][0]))
-            print(player_name[0] + ' has an average spin direction of ' + str(result[0][1]))
+            player = request_player(cursor)
+            result = Most_common_pitch_type(cursor, player[1])
+            print(player[0] + '\'s most common pitche type is ' + str(result[0][0]) + ' with a total of ' + str(result[0][1]) + ' pitches')
+
         elif option == 7:
-            player_name = request_player(cursor)
-            result = Average_pitch_speed(cursor,player_name[1])
-            print(player_name[0] + ' has an average spin speed of ' + str(result[0][0]))
-        elif option == 8:
-            player_name = request_player(cursor)
-            result = Most_common_zone_pitched(cursor,player_name[1])
-            print(player_name[0] + ' pitches the most at zone ' + str(result[0][0]) + ' with a total of ' + str(result[0][1]) + 'pitches')
-        elif option == 9:
-            player_name = request_player(cursor)
-            result = Preferred_throwing_side(cursor,player_name[1])
-            print(player_name[0] + ' preferred throwing side is ' + str(result[0][0]))
-        elif option == 10:
-            player_name = request_player(cursor)
-            result = Most_common_pitch_type(cursor,player_name[1])
-            print(player_name[0] + ' pitches the most of type ' + str(result[0][0]) + ' with a total of ' + str(result[0][1]) + 'pitches')
-        elif option == 11:
-            player_name = request_player(cursor)
-            result = consolidated_stats_pitcher(cursor,player_name[1])
-        elif option == 12:
             result = best_pitcher(cursor)
-            print('Top 5 pitchers with the best strikeouts:pitches ratio')
+            print('5 pitchers with the best strikeouts:pitches ratio')
             for x in result:
                 print(str(x[0]) + ' with ratio ' + str(x[1]))
-        elif option == 13:
+
+        elif option == 8:
             result = Worst_pitcher(cursor)
-            print('Worst 5 pitchers with the best strikeouts:pitches ratio')
+            print('5 pitchers with the worst strikeouts:pitches ratio')
             for x in result:
                 print(str(x[0]) + ' with ratio ' + str(x[1]))
+
         return
