@@ -3,18 +3,18 @@ from searchPython.batter_queries import *
 
 
 def ask_batter(mydb, cursor):
-    print("1. player_ejections")
-    print("2. player_hits_outs")
-    print("3. player_inning")
-    print("4. player_stand")
-    print("5. player_best_pitch_type")
-    print("6. player_worst_pitch_type")
-    print("7. best_batter_bsratio")
-    print("8. worst_batter_bsratio")
-    print("9. best_batter_hgratio")
-    print("10. worst_batter_hgratio")
-    print("11. best_batter_hrgratio")
-    print("12. worst_batter_hrgratio")
+    print("1. View number of ejections")
+    print("2. View outs, hits, and homeruns")
+    print("3. Most played inning")
+    print("4. Preferred stand")
+    print("5. Best pitch type")
+    print("6. Worst pitch type")
+    print("7. Batters with best ball-strike ratio")
+    print("8. Batters with worst ball-strike ratio")
+    print("9. Batters with best hits-games ratio")
+    print("10. Batters with worst hits-games ratio")
+    print("11. Batters with best homeruns-games ratio")
+    print("12. Batters with worst homeruns-games ratio")
 
     while True:
         option = input('Enter your choice: ')
@@ -28,57 +28,57 @@ def ask_batter(mydb, cursor):
             continue
         if option == 1:
             player_name = request_player(cursor)
-            result = player_ejections(cursor, player_name[0])
+            result = player_ejections(cursor, player_name[1])
             print('Total number of ejections for ' + str(player_name[0]) + ' is ' + str(result[0][0]))
         elif option == 2:
             player_name = request_player(cursor)
-            result = player_hits_outs(cursor, player_name[0])
+            result = player_hits_outs(cursor, player_name[1])
             print('Total number of outs for ' + str(player_name[0]) + ' is ' + str(result[0][0]))
             print('Total number of hits for ' + str(player_name[0]) + ' is ' + str(result[0][1]))
             print('Total number of homeruns for ' + str(player_name[0]) + ' is ' + str(result[0][2]))
         elif option == 3:
             player_name = request_player(cursor)
-            result = player_inning(cursor, player_name[0])
-            print(str(player_name[0]) + ' played the most at inning' + str(result[0][0]) + ' a total of ' + str(result[0][1]))
+            result = player_inning(cursor, player_name[1])
+            print(str(player_name[0]) + ' played the most at inning ' + str(result[0][0]) + ' a total of ' + str(result[0][1]))
         elif option == 4:
             player_name = request_player(cursor)
-            result = player_stand(cursor, player_name[0])
-            print('Prefered side of ' + str(player_name[0]) + ' is ' + str(result[0][0]))
+            result = player_stand(cursor, player_name[1])
+            print('Preferred side of ' + str(player_name[0]) + ' is ' + str(result[0][0]))
         elif option == 5:
             player_name = request_player(cursor)
-            result = player_best_pitch_type(cursor, player_name[0])
+            result = player_best_pitch_type(cursor, player_name[1])
             print('Best pitch for ' + str(player_name[0]) + ' to bat at is ' + str(result[0][0]))
         elif option == 6:
             player_name = request_player(cursor)
-            result = player_worst_pitch_type(cursor, player_name[0])
+            result = player_worst_pitch_type(cursor, player_name[1])
             print('Worst pitch for ' + str(player_name[0]) + ' to bat at is ' + str(result[0][0]))
         elif option == 7:
             result = best_batter_bsratio(cursor)
-            print("These are the batters with the best bs ratio")
+            print("These are the batters with the best ball-strike ratio")
             for x in result:
-                print(x[0] + " with a BS ratio of " + str(x[1]))
+                print(x[0] + " with a ball-strike ratio of " + str(x[1]))
         elif option == 8:
             result = worst_batter_bsratio(cursor)
-            print("These are the batters with the worst bs ratio")
+            print("These are the batters with the worst ball-strike ratio")
             for x in result:
-                print(x[0] + " with a BS ratio of " + str(x[1]))
+                print(x[0] + " with a ball-strike ratio of " + str(x[1]))
         elif option == 9:
             result = best_batter_hgratio(cursor)
-            print("These are the batters with the best hgr ratio")
+            print("These are the batters with the best hits-games ratio")
             for x in result:
-                print(x[0] + " with a hgr ratio of " + str(x[1]))
+                print(x[0] + " with a hits-games ratio of " + str(x[1]))
         elif option == 10:
             result = worst_batter_hgratio(cursor)
-            print("These are the batters with the worst hgr ratio")
+            print("These are the batters with the worst hits-games ratio")
             for x in result:
-                print(x[0] + " with a hgr ratio of " + str(x[1]))
+                print(x[0] + " with a hits-games ratio of " + str(x[1]))
         elif option == 11:
             result = best_batter_hrgratio(cursor)
-            print("These are the batters with the best hrg ratio")
+            print("These are the batters with the best homeruns-games ratio")
             for x in result:
-                print(x[0] + " with a hrg ratio of " + str(x[1]))
+                print(x[0] + " with a homeruns-games ratio of " + str(x[1]))
         elif option == 12:
             result = worst_batter_hrgratio(cursor)
-            print("These are the batters with the worst hrg ratio")
+            print("These are the batters with the worst homeruns-games ratio")
             for x in result:
-                print(x[0] + " with a hrg ratio of " + str(x[1]))
+                print(x[0] + " with a homeruns-games ratio of " + str(x[1]))
