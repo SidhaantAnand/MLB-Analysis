@@ -12,7 +12,7 @@ def main():
     mydb, cursor = get_cursor()
 
     stats_dict = {
-        1 : ask_batter,
+        1: ask_batter,
         2: ask_game,
         3: ask_pitcher,
         4: ask_umpire,
@@ -21,7 +21,7 @@ def main():
     }
 
     stats_print_dict = {
-        1 : ". View Batter stats",
+        1: ". View Batter stats",
         2: ". View Game stats",
         3: ". View Pitcher stats",
         4: ". View Umpire stats",
@@ -43,13 +43,13 @@ def main():
         if option < 1 or option > 2:
             print('Invalid option, please choose 1 or 2')
             continue
-        
+
         if option == 1:
             print('What Stats would you like to view')
             for x in stats_print_dict:
-                print(str(x) + " " + stats_print_dict[x])
+                print(str(x) + stats_print_dict[x])
 
-            while(True):
+            while True:
                 option = input('Enter your choice: ')
                 try:
                     option = int(option)
@@ -59,9 +59,9 @@ def main():
                 if not option in stats_dict:
                     print('Error: You must enter an integer between 1 and 5')
                     continue
-                stats_dict[option](mydb,cursor)
+                stats_dict[option](mydb, cursor)
                 break
-        if option == 2:
+        elif option == 2:
             add_user_data(mydb, cursor)
             continue
 
