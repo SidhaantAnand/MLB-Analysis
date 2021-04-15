@@ -1,3 +1,4 @@
+from requestData.request_team import request_team_name
 from searchPython.game_queries import *
 
 
@@ -62,8 +63,10 @@ def ask_game(mydb, cursor):
                 score = int(score)
             except ValueError:
                 print("Error: Score needs to be an integer")
+                continue
+
             result = higher_than_home_score_val(cursor, score)
-            print("There have been " + result[0][0] + " games with a home score higher than " + str(score))
+            print("There have been " + str(result[0][0]) + " games with a home score equal to or higher than " + str(score))
 
         elif option == 7:
             score = input("Enter minimum score: ")
@@ -71,29 +74,39 @@ def ask_game(mydb, cursor):
                 score = int(score)
             except ValueError:
                 print("Error: Score needs to be an integer")
+                continue
+
             result = higher_than_home_score_val(cursor, score)
-            print("There have been " + result[0][0] + " games with an away score higher than " + str(score))
+            print("There have been " + str(result[0][0]) + " games with an away score equal to or higher than " + str(score))
 
         elif option == 8:
             result = Longest_game_elapsed_time(cursor)
-            print("The game with the longest elapsed time was " + result[1] + " at " + result[0] + " for " + str(result[3]) + " minutes, on " + str(result[2].date()))
+            away_team = request_team_name(cursor, result[1])
+            home_team = request_team_name(cursor, result[0])
+            print("The game with the longest elapsed time was the " + away_team + " at the " + home_team + " for " + str(result[3]) + " minutes, on " + str(result[2].date()))
 
         elif option == 9:
             result = Longest_game_innings(cursor)
             print("There have been " + str(len(result)) + " games with a high of " + str(result[0][1]) + " innings. They are: ")
             for x in result:
-                print(x[3] + " at " + x[2] + " on " + str(x[4].date()))
+                away_team = request_team_name(cursor, x[3])
+                home_team = request_team_name(cursor, x[2])
+                print(away_team + " at " + home_team + " on " + str(x[4].date()))
 
         elif option == 10:
             result = Shortest_game_elapsed_time(cursor)
-            print("The game with the shortest elapsed time was " + result[1] + " at " + result[0] + " for " + str(result[3]) + " minutes, on " + str(result[2].date()))
+            away_team = request_team_name(cursor, result[1])
+            home_team = request_team_name(cursor, result[0])
+            print("The game with the shortest elapsed time was the " + away_team + " at the " + home_team + " for " + str(result[3]) + " minutes, on " + str(result[2].date()))
 
         elif option == 11:
             result = Longest_winning_streak(mydb, cursor)
-            print("The longest winning streak was by " + result[0] + " for " + str(result[1]) + " games")
+            team = request_team_name(cursor, result[0])
+            print("The longest winning streak was by the " + team + " for " + str(result[1]) + " games")
 
         elif option == 12:
             result = Longest_losing_streak(mydb, cursor)
-            print("The longest losing streak was by " + result[0] + " for " + str(result[1]) + " games")
+            team = request_team_name(cursor, result[0])
+            print("The longest losing streak was by the " + team + " for " + str(result[1]) + " games")
 
-        break
+        continue

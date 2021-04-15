@@ -50,14 +50,14 @@ def lowest_attendance(cursor):
 
 
 def higher_than_home_score_val(cursor,val):
-	sql = '''select count(*) from Games where home_final_score > {val};'''
+	sql = '''select count(*) from Games where home_final_score >= {val};'''
 	sql = sql.format(val=val)
 	cursor.execute(sql)
 	return cursor.fetchall()
 
 
 def higher_than_away_score_val(cursor,val):
-	sql = '''select count(*) from Games where away_final_score > {val};'''
+	sql = '''select count(*) from Games where away_final_score >= {val};'''
 	sql = sql.format(val=val)
 	cursor.execute(sql)
 	return cursor.fetchall()

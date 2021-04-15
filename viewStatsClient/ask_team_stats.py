@@ -25,7 +25,7 @@ def ask_team(mydb, cursor):
 			continue
 
 		if option in [3, 4, 7, 8, 9, 10]:
-			team_info = request_team(cursor)
+			team_info = request_team_id(cursor)
 			if team_info is None:
 				continue
 			team = team_info[0]

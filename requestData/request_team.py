@@ -1,4 +1,4 @@
-def request_team(cursor):
+def request_team_id(cursor):
 	sql = ''' SELECT team_id, team_name FROM Teams; '''
 	cursor.execute(sql)
 	result = cursor.fetchall()
@@ -13,3 +13,10 @@ def request_team(cursor):
 	else:
 		print("Incorrect team entered")
 		return None
+
+
+def request_team_name(cursor, team_id):
+	sql = 'SELECT team_name FROM Teams where team_id = \'{team_id}\';'
+	sql = sql.format(team_id=team_id)
+	cursor.execute(sql)
+	return cursor.fetchall()[0][0]
