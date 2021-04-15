@@ -30,15 +30,15 @@ order by count(venue_name) desc limit 1;
 -- (best umpire)
 with umpireId as
 (select umpire_id, full_name from Umpires)
-select full_name from GameUmpireStats
+select full_name, sum(ejections)/sum(bs) as ratio from GameUmpireStats
 inner join umpireId using (umpire_id)
 group by full_name
-order by sum(ejections)/sum(bs) desc limit 1;
+order by ratio desc limit 1;
 
 -- (worst umpire)
-with umpireId as
-(select umpire_id, full_name from Umpires)
-select full_name from GameUmpireStats
-inner join umpireId using (umpire_id)
-group by full_name
-order by sum(ejections)/sum(bs) limit 1;
+with umpireId as (select umpire_id, full_name from Umpires),
+umpire_ejections as
+    (select full_name, sum(ejections)/sum(bs) as ratio from GameUmpireStats inner join umpireId using (umpire_id) group by full_name)
+select * from umpire_ejections
+where ratio is not null
+order by ratio limit 1;
