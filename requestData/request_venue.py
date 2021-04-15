@@ -5,10 +5,10 @@ def request_venue(cursor):
     venues = []
     for x in result:
         venues.append(x[0])
-    while(True):
-        option = raw_input('Enter a Venue: ')
+    while True:
+        option = input('Enter a venue: ')
         option = str(option)
-        if(option in venues):
+        if option in venues:
             return option
         else:
-            print("Incorrect Venue entered")
+            print("No such venue")

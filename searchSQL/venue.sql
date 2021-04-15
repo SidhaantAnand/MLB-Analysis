@@ -54,12 +54,12 @@ maxOnly AS ( SELECT * FROM joinAwayTeam WHERE (home_final_score + away_final_sco
 SELECT CONCAT(venue_name, " => " , HOME_TEAM, " vs ", AWAY_TEAM, " => ", home_final_score, " : ", away_final_score) AS Answer FROM maxOnly ORDER BY venue_name;
 
 -- number of delayed games per venue
-SELECT COUNT(*) AS tot_games_with_delay,venue_name FROM Games WHERE delay > 0 WHERE venue_name = 'Chase Field';
+SELECT COUNT(*) AS tot_games_with_delay,venue_name FROM Games WHERE delay > 0 AND venue_name = 'Chase Field';
 
 -- Venue with the most delayed games
 WITH delayCount AS ( SELECT count(*) AS delay_count,venue_name FROM Games WHERE delay > 0 GROUP BY venue_name ),
 MAxdelayCount AS (SELECT delay_count,venue_name FROM delayCount ORDER BY delay_count DESC LIMIT 1)
-SELECT CONCAT(venue_name, " has games with ", delay_count) AS Answer FROM MAxdelayCount;
+SELECT CONCAT(venue_name, " has had the most delayed games with ", delay_count) AS Answer FROM MAxdelayCount;
 
 
 -- Average temperature per Venue
