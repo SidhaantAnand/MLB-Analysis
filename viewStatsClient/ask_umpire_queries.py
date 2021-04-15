@@ -14,10 +14,10 @@ def ask_umpire(mydb, cursor):
         try:
             option = int(option)
         except ValueError:
-            print('Error: You must enter an integer between 1 and 9')
+            print('Error: You must enter an integer between 1 and 6')
             continue
         if option < 1 or option > 6:
-            print('Invalid option, please choose between 1 and 9')
+            print('Invalid option, please choose between 1 and 6')
             continue
 
         umpire_name = ""

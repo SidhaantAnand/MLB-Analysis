@@ -18,10 +18,10 @@ def ask_team(mydb, cursor):
 		try:
 			option = int(option)
 		except ValueError:
-			print('Error: You must enter an integer between 1 and 9')
+			print('Error: You must enter an integer between 1 and 10')
 			continue
 		if option < 1 or option > 10:
-			print('Invalid option, please choose between 1 and 9')
+			print('Invalid option, please choose between 1 and 10')
 			continue
 
 		if option in [3, 4, 7, 8, 9, 10]:

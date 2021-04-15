@@ -17,10 +17,10 @@ def ask_pitcher(mydb, cursor):
         try:
             option = int(option)
         except ValueError:
-            print('Error: You must enter an integer between 1 and 13')
+            print('Error: You must enter an integer between 1 and 8')
             continue
-        if option < 1 or option > 13:
-            print('Invalid option, please choose between 1 and 13')
+        if option < 1 or option > 8:
+            print('Invalid option, please choose between 1 and 8')
             continue
 
         if option == 1:
