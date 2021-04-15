@@ -2,22 +2,25 @@ from searchPython.umpire_queries import *
 
 
 def ask_umpire(mydb, cursor):
-    print("1. Number of games officiated")
-    print("2. Ejections by umpire")
-    print("3. Most common position")
-    print("4. Most common venue")
-    print("5. Best umpire")
-    print("6. Worst umpire")
 
     while True:
+        print("1. Number of games officiated")
+        print("2. Ejections by umpire")
+        print("3. Most common position")
+        print("4. Most common venue")
+        print("5. Best umpire")
+        print("6. Worst umpire")
+        print("7. Back")
         option = input('Enter your choice: ')
+        print('\n')
+
         try:
             option = int(option)
         except ValueError:
-            print('Error: You must enter an integer between 1 and 6')
+            print('Error: You must enter an integer between 1 and 7')
             continue
-        if option < 1 or option > 6:
-            print('Invalid option, please choose between 1 and 6')
+        if option < 1 or option > 7:
+            print('Invalid option, please choose between 1 and 7')
             continue
 
         umpire_name = ""
@@ -49,4 +52,8 @@ def ask_umpire(mydb, cursor):
             result = worst_umpire(cursor)
             print("The worst umpire in terms of ejections:challenges is " + result[0][0] + " with a ratio of " + str(result[0][1]))
 
-        break
+        elif option == 7:
+            print("\033c", end="")
+            return
+
+        print('\n')

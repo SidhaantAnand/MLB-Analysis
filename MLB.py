@@ -1,11 +1,11 @@
+from add_data import add_user_data
+from create_connection import get_cursor
 from viewStatsClient.ask_batter_stats import ask_batter
 from viewStatsClient.ask_game_queries import ask_game
 from viewStatsClient.ask_pitcher_stats import ask_pitcher
 from viewStatsClient.ask_team_stats import ask_team
 from viewStatsClient.ask_umpire_queries import ask_umpire
 from viewStatsClient.ask_venue_queries import ask_venue
-from add_data import add_user_data
-from create_connection import get_cursor
 
 
 def main():
@@ -17,7 +17,8 @@ def main():
         3: ask_pitcher,
         4: ask_umpire,
         5: ask_venue,
-        6: ask_team
+        6: ask_team,
+        7: lambda var1, var2: None
     }
 
     stats_print_dict = {
@@ -26,22 +27,24 @@ def main():
         3: ". View Pitcher stats",
         4: ". View Umpire stats",
         5: ". View Venue stats",
-        6: ". View Team stats"
+        6: ". View Team stats",
+        7: ". Back"
     }
 
     while True:
         print('What would you like to do?')
         print('1. View Stats')
         print('2. Add Data')
+        print('3. Exit')
         option = input('Enter your choice: ')
         try:
             option = int(option)
         except ValueError:
-            print('Error: You must enter an integer between 1 and 2')
+            print('Error: You must enter an integer between 1 and 3')
             continue
 
-        if option < 1 or option > 2:
-            print('Invalid option, please choose 1 or 2')
+        if option < 1 or option > 3:
+            print('Invalid option, please choose 1, 2, or 3')
             continue
 
         if option == 1:
@@ -54,16 +57,23 @@ def main():
                 try:
                     option = int(option)
                 except ValueError:
-                    print('Error: You must enter an integer between 1 and 5')
+                    print('Error: You must enter an integer between 1 and 7')
                     continue
-                if not option in stats_dict:
-                    print('Error: You must enter an integer between 1 and 5')
+
+                if option not in stats_dict.keys():
+                    print('Error: You must enter an integer between 1 and 7')
                     continue
+
+                print("\033c", end="")
                 stats_dict[option](mydb, cursor)
                 break
+
         elif option == 2:
             add_user_data(mydb, cursor)
             continue
+
+        elif option == 3:
+            return
 
 
 if __name__ == '__main__':

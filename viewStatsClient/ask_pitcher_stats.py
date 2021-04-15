@@ -3,24 +3,27 @@ from searchPython.pitcher_queries import *
 
 
 def ask_pitcher(mydb, cursor):
-    print("1. Throwing stats")
-    print("2. Number of strikeouts")
-    print("3. Number of home runs allowed")
-    print("4. Most common zone pitched")
-    print("5. Preferred throwing side")
-    print("6. Most common pitch type")
-    print("7. Best pitcher (strikeouts:pitches)")
-    print("8. Worst pitcher (strikeouts:pitches)")
 
     while True:
+        print("1. Throwing stats")
+        print("2. Number of strikeouts")
+        print("3. Number of home runs allowed")
+        print("4. Most common zone pitched")
+        print("5. Preferred throwing side")
+        print("6. Most common pitch type")
+        print("7. Best pitcher (strikeouts:pitches)")
+        print("8. Worst pitcher (strikeouts:pitches)")
+        print("9. Back")
         option = input('Enter your choice: ')
+        print('\n')
+
         try:
             option = int(option)
         except ValueError:
-            print('Error: You must enter an integer between 1 and 8')
+            print('Error: You must enter an integer between 1 and 9')
             continue
-        if option < 1 or option > 8:
-            print('Invalid option, please choose between 1 and 8')
+        if option < 1 or option > 9:
+            print('Invalid option, please choose between 1 and 9')
             continue
 
         if option == 1:
@@ -74,4 +77,8 @@ def ask_pitcher(mydb, cursor):
             for x in result:
                 print(str(x[0]) + ' with ratio ' + str(x[1]))
 
-        return
+        elif option == 9:
+            print("\033c", end="")
+            return
+
+        print('\n')

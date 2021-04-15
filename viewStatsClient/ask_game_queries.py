@@ -3,28 +3,31 @@ from searchPython.game_queries import *
 
 
 def ask_game(mydb, cursor):
-    print("1. Game with the highest home score")
-    print("2. Game with the highest away score")
-    print("3. Game with the highest combined score")
-    print("4. Game with the highest attendance")
-    print("5. Game with the lowest attendance")
-    print("6. Games with minimum home score")
-    print("7. Games with minimum away score")
-    print("8. Longest game")
-    print("9. Most innings in a game")
-    print("10. Shortest game")
-    print("11. Longest winning streak")
-    print("12. Longest losing streak")
 
     while True:
+        print("1. Game with the highest home score")
+        print("2. Game with the highest away score")
+        print("3. Game with the highest combined score")
+        print("4. Game with the highest attendance")
+        print("5. Game with the lowest attendance")
+        print("6. Games with minimum home score")
+        print("7. Games with minimum away score")
+        print("8. Longest game")
+        print("9. Most innings in a game")
+        print("10. Shortest game")
+        print("11. Longest winning streak")
+        print("12. Longest losing streak")
+        print("13. Back")
         option = input('Enter your choice: ')
+        print('\n')
+
         try:
             option = int(option)
         except ValueError:
-            print('Error: You must enter an integer between 1 and 12')
+            print('Error: You must enter an integer between 1 and 13')
             continue
-        if option < 1 or option > 12:
-            print('Invalid option, please choose between 1 and 12')
+        if option < 1 or option > 13:
+            print('Invalid option, please choose between 1 and 13')
             continue
 
         if option == 1:
@@ -109,4 +112,8 @@ def ask_game(mydb, cursor):
             team = request_team_name(cursor, result[0])
             print("The longest losing streak was by the " + team + " for " + str(result[1]) + " games")
 
-        continue
+        elif option == 13:
+            print("\033c", end="")
+            return
+
+        print('\n')

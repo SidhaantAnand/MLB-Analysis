@@ -1,27 +1,31 @@
-from searchPython.team_queries import *
 from requestData.request_team import *
+from searchPython.team_queries import *
 
 
 def ask_team(mydb, cursor):
-	print("1. Win ratio for every team")
-	print("2. Best win ratio amongst all teams")
-	print("3. Per team win ratio vs all other teams")
-	print("4. Per team best win record against")
-	print("5. Home record per team")
-	print("6. Team with the best home record")
-	print("7. Top 5 batters with the best hits:bat-sessions ratio per team")
-	print("8. Top 5 batters with the most homeruns per team")
-	print("9. Top 5 pitchers with the best strikeouts:pitches ratio per team")
-	print("10. Top 5 players with the most appearances per team")
+
 	while True:
+		print("1. Win ratio for every team")
+		print("2. Best win ratio amongst all teams")
+		print("3. Per team win ratio vs all other teams")
+		print("4. Per team best win record against")
+		print("5. Home record per team")
+		print("6. Team with the best home record")
+		print("7. Top 5 batters with the best hits:bat-sessions ratio per team")
+		print("8. Top 5 batters with the most homeruns per team")
+		print("9. Top 5 pitchers with the best strikeouts:pitches ratio per team")
+		print("10. Top 5 players with the most appearances per team")
+		print("11. Back")
 		option = input('Enter your choice: ')
+		print('\n')
+
 		try:
 			option = int(option)
 		except ValueError:
-			print('Error: You must enter an integer between 1 and 10')
+			print('Error: You must enter an integer between 1 and 11')
 			continue
-		if option < 1 or option > 10:
-			print('Invalid option, please choose between 1 and 10')
+		if option < 1 or option > 11:
+			print('Invalid option, please choose between 1 and 11')
 			continue
 
 		if option in [3, 4, 7, 8, 9, 10]:
@@ -85,4 +89,8 @@ def ask_team(mydb, cursor):
 			for x in result:
 				print(x[0] + " " + str(x[1]))
 
-		continue
+		elif option == 11:
+			print("\033c", end="")
+			return
+
+		print('\n')
