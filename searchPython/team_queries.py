@@ -7,6 +7,7 @@ SELECT * FROM ratioJoined;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
+
 def best_win_ratio(cursor):
 	sql = '''WITH numWins AS ( SELECT count(*) as wins,team_id FROM GameTeamStats WHERE won = \'W\' GROUP BY team_id),
 numGames AS ( SELECT count(*) as num_games, team_id FROM GameTeamStats GROUP BY team_id),
@@ -17,7 +18,8 @@ SELECT * FROM ratioJoined;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def win_ratio_vs_every_team(cursor,team):
+
+def win_ratio_vs_every_team(cursor, team):
 	sql = '''WITH filterTeam AS (SELECT * FROM GameTeamStats WHERE team_id = \'{team}\'),
 noFilterTeam AS ( SELECT * FROM GameTeamStats WHERE team_id != \'{team}\'),
 meh AS (SELECT noFilterTeam.team_id, filterTeam.won FROM filterTeam INNER JOIN noFilterTeam USING (g_id)),
@@ -30,7 +32,8 @@ SELECT * FROM teamMerged;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def best_team_to_play_against(cursor,team):
+
+def best_team_to_play_against(cursor, team):
 	sql = '''WITH filterTeam AS (SELECT * FROM GameTeamStats WHERE team_id = \'{team}\'),
 noFilterTeam AS ( SELECT * FROM GameTeamStats WHERE team_id != \'{team}\'),
 meh AS (SELECT noFilterTeam.team_id, filterTeam.won FROM filterTeam INNER JOIN noFilterTeam USING (g_id)),
@@ -44,6 +47,7 @@ SELECT * FROM bestTeam;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
+
 def home_record_every_team(cursor):
 	sql = '''WITH homeOnly AS ( SELECT * FROM GameTeamStats WHERE is_home_team = 1),
 numGames AS ( SELECT COUNT(*) AS num_games, team_id FROM homeOnly GROUP BY team_id ),
@@ -53,6 +57,7 @@ teamMerged AS ( SELECT ratio,team_name FROM merged LEFT JOIN Teams USING(team_id
 SELECT * FROM teamMerged;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
+
 
 def best_home_record(cursor):
 	sql = '''WITH homeOnly AS ( SELECT * FROM GameTeamStats WHERE is_home_team = 1),
@@ -65,7 +70,8 @@ SELECT * FROM bestTeam;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def top_batters_in_terms_of_homeruns(cursor,team):
+
+def top_batters_in_terms_of_hits(cursor,team):
 	sql = '''WITH hitsFilter AS ( SELECT batter_id, event, g_id FROM AtBats WHERE event = \'Home Run\' OR event = \'Single\' OR event = \'Double\' ),
 teamFilter AS ( SELECT * FROM GameTeamStats WHERE team_id = \'{team}\'),
 teamHits AS ( SELECT batter_id FROM teamFilter INNER JOIN hitsFilter USING (g_id)),
@@ -79,7 +85,21 @@ SELECT * FROM playerName;'''
 	cursor.execute(sql)
 	return cursor.fetchall()
 
-def top_pitchers_in_terms_of_strikeout(cursor,team):
+
+def top_batters_in_terms_of_homeruns(cursor,team):
+	sql = '''WITH hitsFilter AS ( SELECT batter_id, event, g_id FROM AtBats WHERE event = 'Home Run'),
+teamFilter AS ( SELECT * FROM GameTeamStats WHERE team_id = \'{team}\'),
+teamHits AS ( SELECT batter_id FROM teamFilter INNER JOIN hitsFilter USING (g_id)),
+countHits AS ( SELECT COUNT(*) AS num_hits,batter_id FROM teamHits GROUP BY (batter_id) ),
+orderedHits AS ( SELECT * FROM countHits ORDER BY num_hits DESC LIMIT 5),
+playerName AS ( SELECT CONCAT(first_name, " ", last_name) AS name, num_hits FROM orderedHits LEFT JOIN Players ON orderedHits.batter_id = Players.player_id)
+SELECT * FROM playerName'''
+	sql = sql.format(team=team)
+	cursor.execute(sql)
+	return cursor.fetchall()
+
+
+def top_pitchers_in_terms_of_strikeout(cursor, team):
 	sql = '''WITH pitchesFilter AS ( SELECT pitcher_id, event, g_id FROM AtBats WHERE event = \'Strikeout\' ),
 teamFilter AS ( SELECT * FROM GameTeamStats WHERE team_id = \'{team}\'),
 teampitches AS ( SELECT pitcher_id FROM teamFilter INNER JOIN pitchesFilter USING (g_id)),
