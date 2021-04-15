@@ -25,15 +25,16 @@ def ask_venue(mydb, cursor):
         try:
             option = int(option)
         except ValueError:
-            print('Error: You must enter an integer between 1 and 14')
+            print('Error: You must enter an integer between 1 and 14\n')
             continue
         if option < 1 or option > 14:
-            print('Invalid option, please choose between 1 and 14')
+            print('Invalid option, please choose between 1 and 14\n')
             continue
 
         if option in [1, 3, 6, 7, 9, 11, 13]:
             venue_name = request_venue(cursor)
             if venue_name is None:
+                print('\n')
                 continue
 
         if option == 1:

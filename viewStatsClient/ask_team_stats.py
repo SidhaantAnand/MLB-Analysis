@@ -22,15 +22,16 @@ def ask_team(mydb, cursor):
 		try:
 			option = int(option)
 		except ValueError:
-			print('Error: You must enter an integer between 1 and 11')
+			print('Error: You must enter an integer between 1 and 11\n')
 			continue
 		if option < 1 or option > 11:
-			print('Invalid option, please choose between 1 and 11')
+			print('Invalid option, please choose between 1 and 11\n')
 			continue
 
 		if option in [3, 4, 7, 8, 9, 10]:
 			team_info = request_team_id(cursor)
 			if team_info is None:
+				print('\n')
 				continue
 			team = team_info[0]
 			team_name = team_info[1]
