@@ -1,36 +1,0 @@
-mysql> select * from Ejections limit 10;
-+------------+-----------+-----------+-----------+------+---------+------+--------------+-----------------------------------------------------------------------------------------+
-| ab_id      | g_id      | event_num | player_id | bs   | correct | team | is_home_team | des                                                                                     |
-+------------+-----------+-----------+-----------+------+---------+------+--------------+-----------------------------------------------------------------------------------------+
-| 2015003219 | 201500044 |       734 |    111034 |      |         | sdn  | TRUE        | San Diego Padres Manager Bud Black ejected by HP umpire Tripp Gibson III.               |
-| 2015003219 | 201500044 |       732 |    461416 |      |         | sdn  | TRUE        | San Diego Padres center fielder Will Venable ejected by HP umpire Tripp Gibson III.     |
-| 2015004134 | 201500055 |       584 |    571697 | Y    | C       | mil  | TRUE        | Milwaukee Brewers second baseman Scooter Gennett ejected by HP umpire Mike Estabrook.   |
-| 2015006692 | 201500088 |       557 |    427406 |      |         | cin  | TRUE        | Cincinnati Reds Manager Bryan Price ejected by 3B umpire Joe West.                      |
-| 2015008446 | 201500111 |       402 |    116346 | Y    | I       | pit  | TRUE        | Pittsburgh Pirates Manager Clint Hurdle ejected by HP umpire David Rackley.             |
-| 2015008724 | 201500115 |       319 |    492632 |      |         | nyn  | TRUE        | New York Mets Manager Terry Collins ejected by HP umpire Alfonso Marquez.               |
-| 2015010563 | 201500139 |       519 |    408211 |      |         | tba  | FALSE        | Tampa Bay Rays Manager Kevin Cash ejected by HP umpire Laz Diaz.                        |
-| 2015010843 | 201500143 |       254 |    434622 |      |         | bal  | FALSE        | Baltimore Orioles pitcher Ubaldo Jimenez ejected by HP umpire Jordan Baker.             |
-| 2015011598 | 201500153 |       437 |    427309 | Y    | C       | chn  | TRUE        | Chicago Cubs Manager Joe Maddon ejected by HP umpire Sam Holbrook.                      |
-| 2015011738 | 201500155 |       401 |    518577 | Y    | C       | laa  | FALSE        | Los Angeles Angels left fielder Collin Cowgill ejected by HP umpire Paul Nauert.        |
-+------------+-----------+-----------+-----------+------+---------+------+--------------+-----------------------------------------------------------------------------------------+
-10 rows in set (0.23 sec)
-
-mysql> notee
-mysql> select * from Ejections limit 10;
-+------------+-----------+-----------+-----------+------+---------+------+--------------+-----------------------------------------------------------------------------------------+
-| ab_id      | g_id      | event_num | player_id | bs   | correct | team | is_home_team | des                                                                                     |
-+------------+-----------+-----------+-----------+------+---------+------+--------------+-----------------------------------------------------------------------------------------+
-| 2015003219 | 201500044 |       734 |    111034 |      |         | sdn  | TRUE         | San Diego Padres Manager Bud Black ejected by HP umpire Tripp Gibson III.               |
-| 2015003219 | 201500044 |       732 |    461416 |      |         | sdn  | TRUE         | San Diego Padres center fielder Will Venable ejected by HP umpire Tripp Gibson III.     |
-| 2015004134 | 201500055 |       584 |    571697 | Y    | C       | mil  | TRUE         | Milwaukee Brewers second baseman Scooter Gennett ejected by HP umpire Mike Estabrook.   |
-| 2015006692 | 201500088 |       557 |    427406 |      |         | cin  | TRUE         | Cincinnati Reds Manager Bryan Price ejected by 3B umpire Joe West.                      |
-| 2015008446 | 201500111 |       402 |    116346 | Y    | I       | pit  | TRUE         | Pittsburgh Pirates Manager Clint Hurdle ejected by HP umpire David Rackley.             |
-| 2015008724 | 201500115 |       319 |    492632 |      |         | nyn  | TRUE         | New York Mets Manager Terry Collins ejected by HP umpire Alfonso Marquez.               |
-| 2015010563 | 201500139 |       519 |    408211 |      |         | tba  | FALSE        | Tampa Bay Rays Manager Kevin Cash ejected by HP umpire Laz Diaz.                        |
-| 2015010843 | 201500143 |       254 |    434622 |      |         | bal  | FALSE        | Baltimore Orioles pitcher Ubaldo Jimenez ejected by HP umpire Jordan Baker.             |
-| 2015011598 | 201500153 |       437 |    427309 | Y    | C       | chn  | TRUE         | Chicago Cubs Manager Joe Maddon ejected by HP umpire Sam Holbrook.                      |
-| 2015011738 | 201500155 |       401 |    518577 | Y    | C       | laa  | FALSE        | Los Angeles Angels left fielder Collin Cowgill ejected by HP umpire Paul Nauert.        |
-+------------+-----------+-----------+-----------+------+---------+------+--------------+-----------------------------------------------------------------------------------------+
-10 rows in set (0.03 sec)
-
-mysql> notee;
