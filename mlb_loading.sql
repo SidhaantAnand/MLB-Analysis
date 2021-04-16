@@ -544,7 +544,7 @@ create table GamePitcherStats(
 
 insert into GamePitcherStats(pitcher_id, g_id, team_id, num_pitches, avg_spin_rate, avg_spin_dir, avg_start_speed, total_b_counts, total_s_counts)
 select pitcher_id, g_id, if(top = true, (select home_team from Games where AtBats.g_id = Games.g_id), (select away_team from Games where AtBats.g_id = Games.g_id)),
-       count(*), avg(spin_rate), avg(spin_dir), avg(start_speed), sum(b_count), sum(s_count)
+       count(*), avg(spin_rate), avg(spin_dir), avg(start_speed), sum(if(type = 'B', 1, 0)), sum(if(type = 'S', 1, 0))
 from AtBats inner join Pitches using (ab_id) group by pitcher_id, g_id, top;
 
 with A as
