@@ -1,4 +1,3 @@
-# TODO: Insertion/Deletion and updates in the games table by the user
 from datetime import datetime
 
 weather_dict = {
