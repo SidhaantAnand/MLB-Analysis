@@ -26,9 +26,11 @@ These packages need to be installed in order for this program to run
 ## Directory Contents
 
 ### Top level
-At the top level, there is an SQL file used to create and populate the database, a few files containing scripts used to
-add data via the client application, a file create_connection.py that connects to the database, and a file MLB.py that
-the client application is run from.
+At the top level, there is an SQL file used to create and populate the database, a file create_connection.py that
+connects to the database, and a file MLB.py that the client application is run from.
+
+### addData/ directory
+The scripts in this directory run code that queries the user for data and adds it to the database.
 
 ### requestData/ directory
 Under this directory are scripts that return IDs for a given name, or vice versa, for players, teams, and venues. An

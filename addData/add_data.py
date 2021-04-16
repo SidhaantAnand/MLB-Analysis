@@ -1,8 +1,9 @@
-from add_team import add_new_team
-from add_venue import add_new_venue
-from add_umpire import add_new_umpire
-from add_player import add_new_player
-from add_game import add_new_game
+from addData.add_team import add_new_team
+from addData.add_venue import add_new_venue
+from addData.add_umpire import add_new_umpire
+from addData.add_player import add_new_player
+from addData.add_game import add_new_game
+
 
 def add_user_data(mydb, mycursor):
     print('What data would you like to enter?')
