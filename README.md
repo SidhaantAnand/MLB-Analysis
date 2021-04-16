@@ -29,7 +29,9 @@ They are also listed in requirements.txt and can be installed by running `pip in
 ### Top level
 At the top level, there is a file requirements.txt with a list of dependencies, a file mlb_loading.sql that is used to
 create and populate the database, a file create_connection.py that connects to the database, and a file MLB.py that the
-client application is run from.
+client application is run from. 
+The CSVs for loading in in mlb_loading can be found at:
+https://www.kaggle.com/pschale/mlb-pitch-data-20152018
 
 ### addData/ directory
 The scripts in this directory run code that queries the user for data and adds it to the database.
