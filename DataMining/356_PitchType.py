@@ -13,7 +13,7 @@ from sqlalchemy import create_engine
 import pymysql
 
 def load_data():
-    db_connection_str = 'mysql+pymysql://root:MLB_Gang@99.250.146.93/MLB'
+    db_connection_str = 'mysql+pymysql://root:MLB356@99.250.146.93/MLB'
     db_connection = create_engine(db_connection_str)
 
     df = pd.read_sql('SELECT * FROM Pitches', con=db_connection)
@@ -54,7 +54,7 @@ def print_accuracy_score(y_test,dtree_predictions):
     for i in range(0,len(y_test)):
         if(dtree_predictions[i] == y_test[i]):
             count = count + 1
-    print("Accuracy of predictions is " + str(count/len(y_test)))
+    print(str(count/len(y_test)))
 
 def validation(dtree_model,y_test,X_test):
     dtree_predictions = dtree_model.predict(X_test)
@@ -168,6 +168,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 dtree_model = train_model(X_train, y_train)
 
 dtree_predictions = dtree_model.predict(X_test)
+print("Accuracy for multiclass")
 print_accuracy_score(y_test,dtree_predictions)
 
 cm = confusion_matrix(y_test, dtree_predictions)
@@ -191,12 +192,6 @@ plt.show()
 models = []
 for class_to_consider in labels:
     models.append(one_vs_all(pitcher_df,class_to_consider))
-
-
-print(get_most_imp_features(models[0]))
-print(get_most_imp_features(models[1]))
-print(get_most_imp_features(models[2]))
-print(get_most_imp_features(dtree_model))
 
 
 

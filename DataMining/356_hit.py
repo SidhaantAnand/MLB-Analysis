@@ -8,17 +8,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def load_data_pitches():
-    db_connection_str = 'mysql+pymysql://root:MLB_Gang@99.250.146.93/MLB'
+    db_connection_str = 'mysql+pymysql://root:MLB356@99.250.146.93/MLB'
     db_connection = create_engine(db_connection_str)
 
     df = pd.read_sql('SELECT * FROM Pitches', con=db_connection)
     return df
 
 def load_data_atbats():
-    db_connection_str = 'mysql+pymysql://root:MLB_Gang@99.250.146.93/MLB'
+    db_connection_str = 'mysql+pymysql://root:MLB356@99.250.146.93/MLB'
     db_connection = create_engine(db_connection_str)
 
-    df = pd.read_sql('SELECT * FROM AtBats', con=db_connection)
+    df = pd.read_sql('SELECT * FROM AtBats LIMIT 100', con=db_connection)
     return df
 
 def pitchal(row):
@@ -141,6 +141,7 @@ features = X.columns
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 clf = LogisticRegression(random_state=0).fit(X_train, y_train)
 y_pred = clf.predict(X_test)
+print("Accuracy of model:")
 print(clf.score(X_test,y_test))
 
 
@@ -155,11 +156,19 @@ best_features = sorted(features_df, key=lambda k: k['imp'],reverse=True)[0:5]
 names = list(map(lambda x: x['name'],best_features))
 values = list(map(lambda x: x['imp'],best_features))
 
-
-fig = plt.figure()
-ax = fig.add_axes([0,0,1,1])
-ax.bar(names,values)
+fig = plt.figure(figsize = (10, 5))
+plt.bar(names, values, color='maroon', width=0.4)
+plt.xlabel("Features")
+plt.ylabel("Weight")
+plt.title("Features with the most impact")
 plt.show()
 
+for feature in names:
+    print("Consider feature" + str(feature))
+    print("Value => ratio of hits:total entries")
+    for x in X[feature].unique():
+        f = df2[df['o'] == x]
+        f2 = f[f['event'] == 1]
+        print(str(x) + " => " + str(f.shape[0]/X.shape[0]))
 
 

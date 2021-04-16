@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 import pymysql
 
 def load_data():
-    db_connection_str = 'mysql+pymysql://root:MLB_Gang@99.250.146.93/MLB'
+    db_connection_str = 'mysql+pymysql://root:MLB356@99.250.146.93/MLB'
     db_connection = create_engine(db_connection_str)
 
     df = pd.read_sql('SELECT * FROM Pitches', con=db_connection)
