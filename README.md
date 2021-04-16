@@ -8,7 +8,7 @@ To run, use command `python MLB.py`
 
 ### Requirements
 
-This program requires Python 3.9.1 to run. Additionally, the following packages need to be installed
+This program requires Python 3.7.4 to run. Additionally, the following packages need to be installed
 
 * matplotlib 3.1.3
 * mysql-connector-python 8.0.23
