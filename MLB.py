@@ -1,3 +1,5 @@
+from mysql.connector.errors import DatabaseError, ProgrammingError
+
 from addData.add_data import add_user_data
 from create_connection import get_cursor
 from viewStatsClient.ask_batter_stats import ask_batter
@@ -9,7 +11,14 @@ from viewStatsClient.ask_venue_queries import ask_venue
 
 
 def main():
-    mydb, cursor = get_cursor()
+    try:
+        mydb, cursor = get_cursor()
+    except ProgrammingError:
+        print('Invalid credentials! Please fix and try again')
+        return
+    except DatabaseError:
+        print('Connection timed out. IP address may be incorrect. Please fix and try again')
+        return
 
     stats_dict = {
         1: ask_batter,
