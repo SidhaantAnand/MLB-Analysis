@@ -51,3 +51,10 @@ Contains the raw SQL executed by each of the functions in the searchPython/ dire
 
 ### viewStatsClient/ directory
 The scripts in this directory run the code that asks the user what stats they want to view.
+
+### DataMining/ directory
+The scripts in this directory run the data mining investigations as described in the lab report
+- 356_PitchType.py : Script for Investigation #1 => Deciding what factors help identifying the pitch type 
+- 356_Kmeans.py : Script for Investigation #2 => Finding the correlation between px,pz,zone
+- 356_hit.py : Script for Investigation #3 => Finding what attributes and what values of those attributes contribute to a batter managing to hit the pitch  
+All files can be run as : python <filename>
