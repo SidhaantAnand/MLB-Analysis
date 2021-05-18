@@ -1,6 +1,5 @@
-# ECE 356 Project
-
-ECE 356 Database Project, using MLB data from 2015 to 2018.
+# MLB Analysis Project
+This project utilizes MLB data from 2015 to 2018.
 
 ## Running the client application
 
